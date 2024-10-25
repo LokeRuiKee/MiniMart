@@ -1,9 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\model",
-    "\\videoDataset"
+    "\\model"
   ],
-  "SelectedNode": "\\videoToImage.py",
+  "SelectedNode": "\\sample.json",
   "PreviewInSolutionExplorer": false
 }

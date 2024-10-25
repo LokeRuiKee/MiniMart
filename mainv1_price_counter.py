@@ -1,18 +1,12 @@
 from ultralytics import YOLO
 import cv2
+import json
+
 
 model = YOLO("C:\\Users\\ptplokee\\source\\repos\\MiniMart\\model\\modelv2\\weights\\best.pt")  # load the best model
 
-item_prices = {
-    'pau_chickenCurry': 3.30,
-    'drinho_soya': 2.00,
-    'drinho_sugarCane': 1.90,
-    'pau_kaya': 2.80,
-}
-
-# Track detected items and total price
+# Track detected items
 detected_items = {}
-total_price = 0.0
 
 # Initialize the webcam
 cap = cv2.VideoCapture(0)
@@ -33,23 +27,28 @@ while True:
 
         # Get the class names for the detected items
         class_names = [model.names[int(cls_id)] for cls_id in class_ids]
-
-        # Loop through detected items
-        for class_name in class_names:
-            if class_name not in detected_items:
-                # First time detection, add to checkout list
-                detected_items[class_name] = item_prices.get(class_name, 0.0)
-                total_price += item_prices.get(class_name, 0.0)
+        class_id = int(class_ids[0]) if class_ids.size > 0 else None
 
         # Display detection on the webcam feed
-        for class_name, confidence in zip(class_names, confidences):
-            label = "{} ({:.2f})".format(class_name, confidence)
+        for class_name, confidence, class_ids in zip(class_names, confidences, class_ids):
+            label = "{} {} ({:.2f})".format(class_id, class_name, confidence)
+
             # You can add bounding boxes and text to frame
             cv2.putText(frame, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+            # for writing to json
+            data = [{'class_id': class_id, 'class_name': class_name}]
+
+            # Serializing json
+            json_object = json.dumps(data, indent=4)
+ 
+            # Writing to sample.json
+            f = open("predictedData.json", "w")
+            f.write(json_object)
     
     # Show the running total and number of items on the frame
     num_items = len(detected_items)
-    cv2.putText(frame, "Items: {} Total: ${:.2f}".format(num_items, total_price), (10, 60),
+    cv2.putText(frame, "Items: {}".format(num_items), (10),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # Display the webcam feed with object detection
