@@ -1,0 +1,27 @@
+[
+    {
+        "ID": 1,
+        "Name": "Luxury Chips",
+        "Price": 5.50
+    },
+    {
+        "ID": 2,
+        "Name": "Cream-O Chocolate",
+        "Price": 3.80
+    },
+    {
+        "ID": 3,
+        "Name": "Cream-O White Chocolate",
+        "Price": 3.80
+    },
+    {
+        "ID": 4,
+        "Name": "Golden Crackers",
+        "Price": 3.90
+    },
+    {
+        "ID": 5,
+        "Name": "Malkist Cream Crackers",
+        "Price": 2.50
+    }
+]

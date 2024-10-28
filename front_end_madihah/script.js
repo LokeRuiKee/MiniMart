@@ -23,11 +23,57 @@ function stop(e) {
     video.srcObject = null;
 }
 
+const xmlhttp = new XMLHttpRequest();
+// xmlhttp.onload = function () {
+//     const myObj = JSON.parse(this.responseText);
+//     document.getElementById("demo").innerHTML = myObj.class_id;
+// }
+// xmlhttp.open("GET", "./sample.json");
+// xmlhttp.send();
+
+// fetch('./data.json')
+//     .then((response) => response.json())
+//     .then((json) => console.log(json));
+
 var items = new Array();
 var obj = {};
 var tr;
 var total = 0;
 var d1 = items;
+
+const object = {
+    1: [
+        {
+            "Name": "Luxury Chips",
+            "Price": 5.50
+        }
+    ],
+    2: [
+        {
+            "Name": "Cream-O Chocolate",
+            "Price": 3.80
+        }
+    ],
+    3: [
+        {
+            "Name": "Cream-O White Chocolate",
+            "Price": 3.80
+        }
+    ],
+    4: [
+        {
+            "Name": "Golden Crackers",
+            "Price": 3.90
+        }
+    ],
+    5: [
+        {
+            "Name": "Malkist Cream Crackers",
+            "Price": 2.50
+        }
+    ]
+};
+
 function addItem() {
     console.log("addItem() called.")
     var table = document.getElementById("myTable");
@@ -35,41 +81,62 @@ function addItem() {
 
     var row = table.insertRow(tbodyRowCount);
 
-    // not sure yet
-    // var items = new Array();
-    // var obj = {};
+    xmlhttp.onload = function () {
+        const myObj = JSON.parse(this.responseText);
+        let id = myObj.class_id;
+        let text = ""
+        text += id + "<br>";
+        text += myObj.class_name + "<br>";
 
-    obj.Item = "Pau Kaya";
-    obj.Quantity = "1";
-    obj.Price = "1.50";
-    items.push(obj);
-    console.log(items);
+        document.getElementById("demo").innerHTML = text;
 
-    // var tr;
-    // var total = 0;
-    // var d1 = items;
-    calcTotal();
-    // $(function calcTotal() {
-    //     console.log("calcTotal() called.")
-    //     for (var i = 0; i < d1.length; i++) {
-    //         total += parseFloat(d1[i].Price);
-    //         console.log("total: " + total);
-    //         $('#total').html(total);
-    //     }
-    // });
+        for (const key in object) {
+            // console.log(`${key}:`);
+            // object[key].forEach(item => {
+            //     console.log(`\tName: ${item.Name}`);
+            //     if (item.Price) {
+            //         console.log(`\tPrice: ${item.Price}`);
+            //     }
+            //     console.log();
+            // });
 
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
+            console.log("key: " + key);
+            console.log("id: " + id);
+            if (parseInt(key) === id) {
+                console.log("key equals id")
+                object[key].forEach(item => {
+                    console.log(`\tName: ${item.Name}`);
+                    obj.Item = item.Name;
+                    obj.Quantity = "1";
+                    if (item.Price) {
+                        console.log(`\tPrice: ${item.Price}`);
+                        obj.Price = item.Price.toFixed(2);;
+                    }
+                    console.log();
+                });
+                items.push(obj);
+                break;
+            }
+        }
 
-    // change to display info from array
-    cell1.innerHTML = "Pau Kaya";
-    cell2.innerHTML = "1";
-    cell3.innerHTML = "RM 1.50";
+        console.log("items: " + items);
 
-    var deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
-    cell4.innerHTML = deletebtn;
+        calcTotal();
+
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+
+        cell1.innerHTML = obj.Item;
+        cell2.innerHTML = obj.Quantity;
+        cell3.innerHTML = obj.Price;
+
+        var deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
+        cell4.innerHTML = deletebtn;
+    }
+    xmlhttp.open("GET", "./dummy_detected_item.json");
+    xmlhttp.send();
 }
 
 function calcTotal() {
@@ -106,5 +173,5 @@ $(function () {
         var cells = rows[i].getElementsByTagName("TD");
         amount += parseFloat(cells[2].innerHTML);
     }
-    $('[id*=total]').val(amount);
+    $('[id*=total]').val(amount.toFixed(2));
 });
