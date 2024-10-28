@@ -5,7 +5,6 @@ model = YOLO("C:\\Users\\ptplokee\\source\\repos\\MiniMart\\model\\modelv3\\weig
 
 results=model.track(source=0, show=True)
 
-
 #while True:
 #    ret, frame = cam.read()
 

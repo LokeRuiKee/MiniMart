@@ -19,6 +19,9 @@ while True:
     # Use the model to predict objects in the frame
     results = model(frame)
 
+    # Prepare data for JSON output
+    detected_data = []  # List to store detected items for JSON
+
     # Loop through detected results
     for result in results:
         boxes = result.boxes
@@ -36,20 +39,17 @@ while True:
             # You can add bounding boxes and text to frame
             cv2.putText(frame, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-            # for writing to json
-            data = [{'class_id': class_id, 'class_name': class_name}]
+            # Append each detected item to the data list
+            detected_data = {
+                "class_id": class_id,
+                "class_name": class_name,
+                "confidence": round(float(confidence), 2)
+            }
 
-            # Serializing json
-            json_object = json.dumps(data, indent=4)
- 
-            # Writing to sample.json
-            f = open("predictedData.json", "w")
-            f.write(json_object)
-    
-    # Show the running total and number of items on the frame
-    num_items = len(detected_items)
-    cv2.putText(frame, "Items: {}".format(num_items), (10),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    # Open the file, write the JSON, and close it manually
+    f = open("predictedData.json", "w")
+    json.dump(detected_data, f, indent=4)  # Write JSON with indentation for readability
+    f.close()  # Close the file
 
     # Display the webcam feed with object detection
     cv2.imshow("Self Checkout", frame)
