@@ -1,20 +1,10 @@
 from ultralytics import YOLO
+import supervision as sv
 
-model = YOLO("C:\\Users\\ptplokee\\source\\repos\\MiniMart\\model\\modelv3\\weights\\best.pt")  # load the best model
+model = YOLO("C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\model\\martModelv2\\weights\\best.pt")  # load the best model
 
 
 results=model.track(source=0, show=True)
 
-#while True:
-#    ret, frame = cam.read()
-
-#    # Display the captured frame
-#    cv2.imshow('Camera', frame)
-
-#    # Press 'q' to exit the loop
-#    if cv2.waitKey(1) == ord('q'):
-#        break
-
-## Release the capture and writer objects
-#cam.release()
-#cv2.destroyAllWindows()
+#json_results = results.pandas().xyxy[0].to_json(orient="records")  # Convert results to JSON
+#print(json_results)
