@@ -1,12 +1,17 @@
 from ultralytics import YOLO
 import cv2
 import json
+import time
 
 
 model = YOLO("C:\\Users\\ptpmaahm\\MiniMart\\model\\martModelv2\\weights\\best.pt")  # load the best model
+model = YOLO("C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\model\\martModelv2\\weights\\best.pt")
 
 # Track detected items
 detected_items = {}
+last_logged_times = {}
+logging_interval = 3 # seconds
+confidence_threshold = 0.5
 
 # Initialize the webcam
 cap = cv2.VideoCapture(0)
@@ -15,9 +20,10 @@ while True:
     ret, frame = cap.read()
     if not ret:
         break
-
+    
     # Use the model to predict objects in the frame
-    results = model(frame)
+    results = model.predict(frame)
+    current_time = time.time()  # Current timestamp for comparison
 
     # Prepare data for JSON output
     detected_data = []  # List to store detected items for JSON
@@ -34,22 +40,27 @@ while True:
 
         # Display detection on the webcam feed
         for class_name, confidence, class_ids in zip(class_names, confidences, class_ids):
-            label = "{} {} ({:.2f})".format(class_id, class_name, confidence)
+            if confidence >= confidence_threshold:
+                label = "{} {} ({:.2f})".format(class_id, class_name, confidence)
+                cv2.putText(frame, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-            # You can add bounding boxes and text to frame
-            cv2.putText(frame, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                last_logged_time = last_logged_times.get(class_name, 0)
 
-            # Append each detected item to the data list
-            detected_data = {
-                "class_id": class_id,
-                "class_name": class_name,
-                "confidence": round(float(confidence), 2)
-            }
+                if current_time - last_logged_time >= logging_interval:
 
-    # Open the file, write the JSON, and close it manually
-    f = open("predictedData.json", "w")
-    json.dump(detected_data, f, indent=4)  # Write JSON with indentation for readability
-    f.close()  # Close the file
+                    # Append each detected item to the data list
+                    detected_data = {
+                        "class_id": class_id,
+                        "class_name": class_name,
+                        "confidence": round(float(confidence), 2)
+                    }
+
+                    f = open("predictedData.json", "w")
+                    json.dump(detected_data, f, indent=4)
+                    f.close()
+                    cv2.putText(frame, "data saved", (30, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+                    last_logged_times[class_name] = current_time
 
     # Display the webcam feed with object detection
     cv2.imshow("Self Checkout", frame)
