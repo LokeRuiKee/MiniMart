@@ -3,7 +3,7 @@ import cv2
 import json
 
 
-model = YOLO("C:\\Users\\ptplokee\\source\\repos\\MiniMart\\model\\modelv2\\weights\\best.pt")  # load the best model
+model = YOLO("C:\\Users\\ptpmaahm\\MiniMart\\model\\martModelv2\\weights\\best.pt")  # load the best model
 
 # Track detected items
 detected_items = {}

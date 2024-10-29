@@ -1,4 +1,18 @@
 
+var previous = null;
+var current = null;
+setInterval(function () {
+    $.getJSON("./dummy_detected_item.json", function (json) {
+        current = JSON.stringify(json);
+        if (previous && current && previous !== current) {
+            console.log("addItem() called from detected item, json file changed")
+            addItem();
+        }
+        previous = current;
+    });
+}, 2000);
+
+$('#total').html(Number(0.00).toFixed(2));
 var video = document.querySelector("#videoElement");
 
 if (navigator.mediaDevices.getUserMedia) {
@@ -84,11 +98,11 @@ function addItem() {
     xmlhttp.onload = function () {
         const myObj = JSON.parse(this.responseText);
         let id = myObj.class_id;
-        let text = ""
-        text += id + "<br>";
-        text += myObj.class_name + "<br>";
+        // let text = ""
+        // text += id + "<br>";
+        // text += myObj.class_name + "<br>";
 
-        document.getElementById("demo").innerHTML = text;
+        // document.getElementById("demo").innerHTML = text;
 
         for (const key in object) {
             // console.log(`${key}:`);
@@ -147,7 +161,7 @@ function calcTotal() {
     for (var i = 0; i < d1.length; i++) {
         total += parseFloat(d1[i].Price);
         console.log("total: " + total);
-        $('#total').html(total);
+        $('#total').html(total.toFixed(2));
     }
     total = 0;
 }
@@ -164,14 +178,3 @@ function deleteItem(r) {
     console.log(items);
     calcTotal();
 }
-
-$(function () {
-    var grid = document.getElementById("myTable");
-    var rows = grid.getElementsByTagName("TR");
-    var amount = 0;
-    for (var i = 1; i < rows.length; i++) {
-        var cells = rows[i].getElementsByTagName("TD");
-        amount += parseFloat(cells[2].innerHTML);
-    }
-    $('[id*=total]').val(amount.toFixed(2));
-});
