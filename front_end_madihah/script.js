@@ -2,7 +2,7 @@
 var previous = null;
 var current = null;
 setInterval(function () {
-    $.getJSON("./dummy_detected_item.json", function (json) {
+    $.getJSON("./detected_item.json", function (json) {
         current = JSON.stringify(json);
         if (previous && current && previous !== current) {
             console.log("addItem() called from detected item, json file changed")
@@ -116,7 +116,7 @@ function addItem() {
 
             console.log("key: " + key);
             console.log("id: " + id);
-            if (parseInt(key) === id) {
+            if (parseInt(key) === parseInt(id)) {
                 console.log("key equals id")
                 object[key].forEach(item => {
                     console.log(`\tName: ${item.Name}`);
@@ -149,7 +149,7 @@ function addItem() {
         var deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
         cell4.innerHTML = deletebtn;
     }
-    xmlhttp.open("GET", "./dummy_detected_item.json");
+    xmlhttp.open("GET", "./detected_item.json");
     xmlhttp.send();
 }
 

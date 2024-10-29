@@ -3,15 +3,13 @@ import cv2
 import json
 import time
 
-
-model = YOLO("C:\\Users\\ptpmaahm\\MiniMart\\model\\martModelv2\\weights\\best.pt")  # load the best model
 model = YOLO("C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\model\\martModelv2\\weights\\best.pt")
 
 # Track detected items
 detected_items = {}
 last_logged_times = {}
-logging_interval = 3 # seconds
-confidence_threshold = 0.5
+logging_interval = 5 # seconds
+confidence_threshold = 0.7
 
 # Initialize the webcam
 cap = cv2.VideoCapture(0)
@@ -50,12 +48,12 @@ while True:
 
                     # Append each detected item to the data list
                     detected_data = {
-                        "class_id": class_id,
-                        "class_name": class_name,
+                        "class_id_roboflow": class_id,
+                        "class_id": class_name,
                         "confidence": round(float(confidence), 2)
                     }
 
-                    f = open("predictedData.json", "w")
+                    f = open("C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\front_end_madihah\\detected_item.json", "w")
                     json.dump(detected_data, f, indent=4)
                     f.close()
                     cv2.putText(frame, "data saved", (30, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
