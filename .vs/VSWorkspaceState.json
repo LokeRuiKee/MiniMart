@@ -2,9 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\front_end_madihah",
-    "\\model\\martModelv2",
-    "\\model\\martModelv2\\weights"
+    "\\model",
+    "\\model\\martModelv2\\weights",
+    "\\templates"
   ],
-  "SelectedNode": "\\front_end_madihah\\ui.html",
+  "SelectedNode": "\\templates\\flask_detect.json",
   "PreviewInSolutionExplorer": false
 }
