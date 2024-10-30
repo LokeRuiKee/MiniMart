@@ -1,18 +1,23 @@
-from flask import Flask, Response, jsonify
+from flask import Flask, Response, jsonify, send_from_directory
 from ultralytics import YOLO
 import cv2
 import json
 import time
+from flask_cors import CORS
+import os
+
 
 app = Flask(__name__)
+CORS(app)
 
-model = YOLO("C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\model\\martModelv2\\weights\\best.pt")
+model = YOLO("../model/martModelv2/weights/best.pt")
 cap = cv2.VideoCapture(0)
 
 detected_items = {}
 last_logged_times = {}
 logging_interval = 5  # seconds
 confidence_threshold = 0.7
+json_directory = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\templates\\static\\"
 
 def generate():
     while True:
@@ -36,13 +41,13 @@ def generate():
 
                     if current_time - last_logged_times.get(class_name, 0) >= logging_interval:
                         detected_data = {
-                            "class_id": int(class_id),
-                            "class_name": class_name,
+                            "class_id_roboflow": int(class_id),
+                            "class_id": class_name,
                             "confidence": round(float(confidence), 2)
                         }
                         last_logged_times[class_name] = current_time
 
-                        f = open("C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\templates\\flask_detect.json", "w")
+                        f = open(os.path.join(json_directory, "flask_detect.json"), "w")
                         json.dump(detected_data, f, indent=4)
                         f.close()
 
@@ -56,6 +61,11 @@ def generate():
 @app.route('/video_feed')
 def video_feed():
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/get_json')
+def get_json():
+    return send_from_directory(json_directory, 'flask_detect.json')
 
 if __name__ == '__main__':
     app.run()
