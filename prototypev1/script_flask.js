@@ -2,13 +2,15 @@
 var previous = null;
 var current = null;
 setInterval(function () {
-    $.getJSON("C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\templates\\flask_detect.json", function (json) {
+    $.getJSON("http://localhost:5000/get_json", function (json) {
         current = JSON.stringify(json);
         if (previous && current && previous !== current) {
-            console.log("addItem() called from detected item, json file changed")
+            console.log("addItem() called from detected item, json file changed");
             addItem();
         }
         previous = current;
+    }).fail(function (jqxhr, textStatus, error) {
+        console.error("Request Failed: " + textStatus + ", " + error);
     });
 }, 2000);
 
@@ -149,7 +151,7 @@ function addItem() {
         var deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
         cell4.innerHTML = deletebtn;
     }
-    xmlhttp.open("GET", "./detected_item.json");
+    xmlhttp.open("GET", "http://localhost:5000/get_json");
     xmlhttp.send();
 }
 
