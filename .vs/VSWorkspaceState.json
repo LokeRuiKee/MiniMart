@@ -1,11 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\front_end_madihah",
-    "\\model",
-    "\\model\\martModelv2\\weights",
-    "\\templates"
+    "\\dataset",
+    "\\model"
   ],
-  "SelectedNode": "\\templates\\flask_detect.json",
+  "SelectedNode": "\\dataset\\video2image.py",
   "PreviewInSolutionExplorer": false
 }
