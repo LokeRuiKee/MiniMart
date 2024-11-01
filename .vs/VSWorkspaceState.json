@@ -2,8 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\dataset",
-    "\\model"
+    "\\prototypev1\\static"
   ],
-  "SelectedNode": "\\dataset\\video2image.py",
+  "SelectedNode": "\\.gitignore",
   "PreviewInSolutionExplorer": false
 }
