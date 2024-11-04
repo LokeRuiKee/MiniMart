@@ -3,8 +3,8 @@ import cv2
 from preprocess import prepare
 
 # Define input and output directories
-input_dir = r"C:\Users\ptplokee\source\minimartDataset\completed upload\tiger_susu"
-output_dir = r"C:\Users\ptplokee\source\minimartDataset\completed upload\tiger_susu\preprocessed"
+input_dir = r"C:\Users\ptplokee\source\mini mart.v6i.yolov11\train\images"
+output_dir = r"C:\Users\ptplokee\source\grayscale"
 
 # Create output directory if it doesn't exist
 os.makedirs(output_dir, exist_ok=True)

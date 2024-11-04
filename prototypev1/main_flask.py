@@ -17,7 +17,7 @@ detected_items = {}
 last_logged_times = {}
 logging_interval = 5  # seconds
 confidence_threshold = 0.7
-json_directory = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\templates\\static\\"
+json_directory = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\prototypev1\\static\\"
 
 def generate():
     while True:
