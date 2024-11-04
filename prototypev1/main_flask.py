@@ -10,7 +10,7 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-model = YOLO("../model/martModelv2/weights/best.pt")
+model = YOLO("../model/martModelv4/weights/best.pt")
 cap = cv2.VideoCapture(0)
 
 detected_items = {}
