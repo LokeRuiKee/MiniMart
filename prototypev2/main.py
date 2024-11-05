@@ -17,8 +17,7 @@ tracker = sv.ByteTrack()
 box_annotator = sv.BoundingBoxAnnotator()
 label_annotator = sv.LabelAnnotator()
 trace_annotator = sv.TraceAnnotator()
-session_items = {}
-logged_tracker_ids = set()
+logged_tracker_ids = set() # use set cuz ensure unique
 
 def inference(frame: np.ndarray):
     """Run inference on a frame and return detection results."""
@@ -50,12 +49,6 @@ def callback(frame: np.ndarray, _: int) -> np.ndarray:
 
     annotated_frame = box_annotator.annotate(frame.copy(), detections=detections)
 
-    ## Log each detection's details if it meets the confidence threshold
-    #for class_name, confidence, class_id in extract_detection_details(results):
-    #    if confidence >= config.CONFIDENCE_THRESHOLD:
-    #        log_item(class_name, confidence, class_id)
-
-    # Log each detection's details if the tracker ID is new
     for tracker_id, (class_name, confidence, class_id) in zip(detections.tracker_id, extract_detection_details(results)):
         if confidence >= config.CONFIDENCE_THRESHOLD:
             if tracker_id not in logged_tracker_ids:
