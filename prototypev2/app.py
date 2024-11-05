@@ -1,7 +1,7 @@
 from flask import Flask, Response, send_from_directory
 from flask_cors import CORS
-from main import generate_video_feed, get_detected_json  # Import functions
-import config  # Import config for paths, etc.
+from main import generate_video_feed
+import config
 
 app = Flask(__name__)
 CORS(app)

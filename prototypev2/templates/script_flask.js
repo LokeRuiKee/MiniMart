@@ -15,17 +15,17 @@ setInterval(function () {
 }, 2000);
 
 $('#total').html(Number(0.00).toFixed(2));
-var video = document.querySelector("#videoElement");
+//var video = document.querySelector("#videoElement");
 
-if (navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function (stream) {
-            video.srcObject = stream;
-        })
-        .catch(function (err0r) {
-            console.log("Something went wrong!");
-        });
-}
+//if (navigator.mediaDevices.getUserMedia) {
+//    navigator.mediaDevices.getUserMedia({ video: true })
+//        .then(function (stream) {
+//            video.srcObject = stream;
+//        })
+//        .catch(function (err0r) {
+//            console.log("Something went wrong!");
+//        });
+//}
 // not used
 function stop(e) {
     var stream = video.srcObject;

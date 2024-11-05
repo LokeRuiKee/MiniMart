@@ -1,83 +1,87 @@
+#todo: add item name as label instead of item id
+
 from ultralytics import YOLO
 import cv2
 import json
 import os
-import time
 import config
+import supervision as sv
+import numpy as np
 
-# Initialize model and video capture
+# Initialize model and tracker
 model = YOLO(config.MODEL_PATH)
 cap = cv2.VideoCapture(0)
 
-# Counters and session tracking
-last_logged_times = {}
-session_items = {}  # Tracks item quantities in the current session
+# Tracker and bounding box annotator setup
+tracker = sv.ByteTrack()
+box_annotator = sv.BoundingBoxAnnotator()
+label_annotator = sv.LabelAnnotator()
+trace_annotator = sv.TraceAnnotator()
+session_items = {}
+
+def inference(frame: np.ndarray):
+    """Run inference on a frame and return detection results."""
+    results = model.predict(frame, conf=config.CONFIDENCE_THRESHOLD)[0]
+    return results
+
+def extract_detection_details(results):
+    """Extract details of each detection from the model results."""
+    for box in results.boxes:
+        class_id = int(box.cls)
+        confidence = float(box.conf)
+        class_name = model.names[class_id]
+        yield class_name, confidence, class_id
+
+def callback(frame: np.ndarray, _: int) -> np.ndarray:
+    """Process the frame to detect, track, and annotate objects."""
+    # Run inference and get results
+    results = inference(frame)
+    
+    # Convert to sv-compatible detections for tracking
+    detections = sv.Detections.from_ultralytics(results)
+    detections = tracker.update_with_detections(detections)  # Track detections across frames
+
+    labels = [
+        f"#{tracker_id} {results.names[class_id]}"
+        for class_id, tracker_id
+        in zip(detections.class_id, detections.tracker_id)
+    ]
+
+    annotated_frame = box_annotator.annotate(frame.copy(), detections=detections)
+    annotated_frame = label_annotator.annotate(annotated_frame, detections=detections, labels=labels)
+
+    # Log each detection's details if it meets the confidence threshold
+    for class_name, confidence, class_id in extract_detection_details(results):
+        if confidence >= config.CONFIDENCE_THRESHOLD:
+            log_item(class_name, confidence, class_id)
+
+    # Annotate the frame with boxes
+    return trace_annotator.annotate(annotated_frame, detections=detections)
 
 def generate_video_feed():
-    """ Generate the video feed with YOLO detections. """
+    """Generate the video feed with detections and annotations."""
     while True:
         ret, frame = cap.read()
         if not ret:
             break
 
-        results = model.predict(frame, agnostic_nms=True)
-        current_time = time.time()
+        # Process the frame with the callback function
+        annotated_frame = callback(frame, 0)
 
-        for result in results:
-            boxes = result.boxes
-            class_ids = boxes.cls.cpu().numpy()
-            confidences = boxes.conf.cpu().numpy()
-            class_names = [model.names[int(cls_id)] for cls_id in class_ids]
-
-            for class_name, confidence, class_id in zip(class_names, confidences, class_ids):
-                if confidence >= config.CONFIDENCE_THRESHOLD:
-                    label = "{} ({:.2f})".format(class_name, confidence)
-                    cv2.putText(frame, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-                    # Log detection with session item counting
-                    if current_time - last_logged_times.get(class_name, 0) >= config.LOGGING_INTERVAL:
-                        log_detection(class_name, class_id, confidence, current_time)
-
-        # Encode the frame as a JPEG
-        _, jpeg = cv2.imencode('.jpg', frame)
+        # Encode the frame as JPEG for display
+        _, jpeg = cv2.imencode('.jpg', annotated_frame)
         frame = jpeg.tobytes()
         
         yield ('--frame\r\n'
                'Content-Type: image/jpeg\r\n\r\n').encode() + frame + '\r\n'.encode()
 
-def log_detection(class_name, class_id, confidence, current_time):
-    """ Log detection and update quantity for detected items in the session. """
-    # Update last logged time for the item
-    last_logged_times[class_name] = current_time
-    
-    # Check if the item already exists in the session log
-    if class_name in session_items:
-        # Increment the quantity if the item has been detected before
-        session_items[class_name]['quantity'] += 1
-    else:
-        # Initialize item data if it's the first detection in the session
-        session_items[class_name] = {
-            "class_id_roboflow": int(class_id),
-            "class_name": class_name,
-            "confidence": round(float(confidence), 2),
-            "quantity": 1
-        }
+def log_item(class_name, confidence, class_id):
+    """Log detected item details to a JSON file."""
+    detected_data = {
+        "class_id_roboflow": int(class_id),
+        "class_name": class_name,
+        "confidence": round(float(confidence), 2)
+    }
 
-    # Save session data to JSON for front-end or post-session processing
-    with open(os.path.join(config.JSON_DIRECTORY, config.JSON_FILE_NAME), "w") as f:
-        json.dump(session_items, f, indent=4)
-
-def get_detected_json():
-    """ Fetch the most recent detection JSON data. """
-    with open(JSON_PATH, "r") as f:
-        data = json.load(f)
-    return data
-
-def finalize_session():
-    """ Finalizes the session and clears session data after checkout. """
-    # Save or process session data as needed, e.g., store in a database or display to the user
-    with open(os.path.join(config.JSON_DIRECTORY, "final_session.json"), "w") as f:
-        json.dump(session_items, f, indent=4)
-
-    # Clear session items for the next checkout session
-    session_items.clear()
+    with open(config.JSON_PATH, "w") as f:
+        json.dump(detected_data, f, indent=4)
