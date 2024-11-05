@@ -10,14 +10,14 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-model = YOLO("../model/martModelv2/weights/best.pt")
+model = YOLO("../model/martModelv4/weights/best.pt")
 cap = cv2.VideoCapture(0)
 
 detected_items = {}
 last_logged_times = {}
 logging_interval = 5  # seconds
 confidence_threshold = 0.7
-json_directory = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\templates\\static\\"
+json_directory = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\prototypev1\\static\\"
 
 def generate():
     while True:

@@ -87,6 +87,24 @@ const object = {
             "Name": "Malkist Cream Crackers",
             "Price": 2.50
         }
+    ],
+    6: [
+        {
+            "Name": "Malkist BBQ Crackers",
+            "Price": 2.80
+        }
+    ],
+    13: [
+        {
+            "Name": "Hwa Tai Banana",
+            "Price": 2.90
+        }
+    ],
+    15: [
+        {
+            "Name": "Hwa Tai Waffler",
+            "Price": 2.90
+        }
     ]
 };
 
@@ -131,6 +149,19 @@ function addItem() {
                     console.log();
                 });
                 items.push(obj);
+
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+
+                cell1.innerHTML = obj.Item;
+                cell2.innerHTML = obj.Quantity;
+                cell3.innerHTML = obj.Price;
+
+                var deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
+                cell4.innerHTML = deletebtn;
+
                 break;
             }
         }
@@ -139,17 +170,17 @@ function addItem() {
 
         calcTotal();
 
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
+        //var cell1 = row.insertCell(0);
+        //var cell2 = row.insertCell(1);
+        //var cell3 = row.insertCell(2);
+        //var cell4 = row.insertCell(3);
 
-        cell1.innerHTML = obj.Item;
-        cell2.innerHTML = obj.Quantity;
-        cell3.innerHTML = obj.Price;
+        //cell1.innerHTML = obj.Item;
+        //cell2.innerHTML = obj.Quantity;
+        //cell3.innerHTML = obj.Price;
 
-        var deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
-        cell4.innerHTML = deletebtn;
+        //var deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
+        //cell4.innerHTML = deletebtn;
     }
     xmlhttp.open("GET", "http://localhost:5000/get_json");
     xmlhttp.send();
