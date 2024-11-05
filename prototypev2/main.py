@@ -18,6 +18,7 @@ box_annotator = sv.BoundingBoxAnnotator()
 label_annotator = sv.LabelAnnotator()
 trace_annotator = sv.TraceAnnotator()
 session_items = {}
+logged_tracker_ids = set()
 
 def inference(frame: np.ndarray):
     """Run inference on a frame and return detection results."""
@@ -39,7 +40,7 @@ def callback(frame: np.ndarray, _: int) -> np.ndarray:
     
     # Convert to sv-compatible detections for tracking
     detections = sv.Detections.from_ultralytics(results)
-    detections = tracker.update_with_detections(detections)  # Track detections across frames
+    detections = tracker.update_with_detections(detections)
 
     labels = [
         f"#{tracker_id} {results.names[class_id]}"
@@ -48,15 +49,21 @@ def callback(frame: np.ndarray, _: int) -> np.ndarray:
     ]
 
     annotated_frame = box_annotator.annotate(frame.copy(), detections=detections)
-    annotated_frame = label_annotator.annotate(annotated_frame, detections=detections, labels=labels)
 
-    # Log each detection's details if it meets the confidence threshold
-    for class_name, confidence, class_id in extract_detection_details(results):
+    ## Log each detection's details if it meets the confidence threshold
+    #for class_name, confidence, class_id in extract_detection_details(results):
+    #    if confidence >= config.CONFIDENCE_THRESHOLD:
+    #        log_item(class_name, confidence, class_id)
+
+    # Log each detection's details if the tracker ID is new
+    for tracker_id, (class_name, confidence, class_id) in zip(detections.tracker_id, extract_detection_details(results)):
         if confidence >= config.CONFIDENCE_THRESHOLD:
-            log_item(class_name, confidence, class_id)
+            if tracker_id not in logged_tracker_ids:
+                logged_tracker_ids.add(tracker_id)  # Mark this tracker ID as logged
+                log_item(class_name, confidence, class_id)
 
-    # Annotate the frame with boxes
-    return trace_annotator.annotate(annotated_frame, detections=detections)
+    return label_annotator.annotate(annotated_frame, detections=detections, labels=labels)
+
 
 def generate_video_feed():
     """Generate the video feed with detections and annotations."""
@@ -79,7 +86,7 @@ def log_item(class_name, confidence, class_id):
     """Log detected item details to a JSON file."""
     detected_data = {
         "class_id_roboflow": int(class_id),
-        "class_name": class_name,
+        "class_id": class_name,
         "confidence": round(float(confidence), 2)
     }
 
