@@ -1,6 +1,7 @@
 
-var previous = null;
-var current = null;
+// calls addItem() when content of json file changes
+let previous = null;
+let current = null;
 setInterval(function () {
     $.getJSON("http://localhost:5000/get_json", function (json) {
         current = JSON.stringify(json);
@@ -14,31 +15,10 @@ setInterval(function () {
     });
 }, 2000);
 
+// display initial total price
 $('#total').html(Number(0.00).toFixed(2));
-//var video = document.querySelector("#videoElement");
 
-//if (navigator.mediaDevices.getUserMedia) {
-//    navigator.mediaDevices.getUserMedia({ video: true })
-//        .then(function (stream) {
-//            video.srcObject = stream;
-//        })
-//        .catch(function (err0r) {
-//            console.log("Something went wrong!");
-//        });
-//}
-// not used
-function stop(e) {
-    var stream = video.srcObject;
-    var tracks = stream.getTracks();
-
-    for (var i = 0; i < tracks.length; i++) {
-        var track = tracks[i];
-        track.stop();
-    }
-
-    video.srcObject = null;
-}
-
+// to count sales of each item
 let salesCount = {};
 
 function updateSalesCount(itemName) {
@@ -51,24 +31,54 @@ function updateSalesCount(itemName) {
     return salesCount[itemName];
 }
 
+// add item to table
+// madihah: new addItem(): comparing with json array from database (added wed, 4:21pm)
+// madihah: not working yet
+// madihah: uncomment to test
+
+//import { getDetails } from './dbConnection/get_item_details.js';
+
+//let total = 0;
+//const d1 = items;
+
+//function addItem() {
+//    console.log("addItem() called.")
+//    const table = document.getElementById("myTable");
+//    const tbodyRowCount = table.tBodies[0].rows.length;
+
+//    const row = table.insertRow(tbodyRowCount);
+
+//    // get item details (name, price) from database based on item id
+//    // not working yet
+//    getDetails();
+
+//    // calculate total
+//    calcTotal();
+
+//    // insert new row with detected item details
+//    const cell1 = row.insertCell(0);
+//    const cell2 = row.insertCell(1);
+//    const cell3 = row.insertCell(2);
+//    const cell4 = row.insertCell(3);
+
+//    cell1.innerHTML = obj.Item;
+//    cell2.innerHTML = obj.Quantity;
+//    cell3.innerHTML = obj.Price;
+
+//    const deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
+//    cell4.innerHTML = deletebtn;
+//}
+
+// madihah: old addItem(): comparing with dictionary
 const xmlhttp = new XMLHttpRequest();
-// xmlhttp.onload = function () {
-//     const myObj = JSON.parse(this.responseText);
-//     document.getElementById("demo").innerHTML = myObj.class_id;
-// }
-// xmlhttp.open("GET", "./sample.json");
-// xmlhttp.send();
 
-// fetch('./data.json')
-//     .then((response) => response.json())
-//     .then((json) => console.log(json));
+const items = new Array();
+const obj = {};
+const tr;
+let total = 0;
+const d1 = items;
 
-var items = new Array();
-var obj = {};
-var tr;
-var total = 0;
-var d1 = items;
-
+// replace dictionary to pull from database
 const object = {
     1: [
         {
@@ -99,55 +109,26 @@ const object = {
             "Name": "Malkist Cream Crackers",
             "Price": 2.50
         }
-    ],
-    6: [
-        {
-            "Name": "Malkist BBQ Crackers",
-            "Price": 2.80
-        }
-    ],
-    13: [
-        {
-            "Name": "Hwa Tai Banana",
-            "Price": 2.90
-        }
-    ],
-    15: [
-        {
-            "Name": "Hwa Tai Waffler",
-            "Price": 2.90
-        }
     ]
 };
 
+// adds item to table
 function addItem() {
     console.log("addItem() called.")
-    var table = document.getElementById("myTable");
-    var tbodyRowCount = table.tBodies[0].rows.length;
+    const table = document.getElementById("myTable");
+    const tbodyRowCount = table.tBodies[0].rows.length;
 
-    var row = table.insertRow(tbodyRowCount);
+    const row = table.insertRow(tbodyRowCount);
 
     xmlhttp.onload = function () {
         const myObj = JSON.parse(this.responseText);
         let id = myObj.class_id;
-        // let text = ""
-        // text += id + "<br>";
-        // text += myObj.class_name + "<br>";
-
-        // document.getElementById("demo").innerHTML = text;
 
         for (const key in object) {
-            // console.log(`${key}:`);
-            // object[key].forEach(item => {
-            //     console.log(`\tName: ${item.Name}`);
-            //     if (item.Price) {
-            //         console.log(`\tPrice: ${item.Price}`);
-            //     }
-            //     console.log();
-            // });
 
             console.log("key: " + key);
             console.log("id: " + id);
+            // compares id from json file to dictionary to get item details
             if (parseInt(key) === parseInt(id)) {
                 console.log("key equals id")
                 object[key].forEach(item => {
@@ -156,71 +137,64 @@ function addItem() {
                     obj.Quantity = "1";
                     if (item.Price) {
                         console.log(`\tPrice: ${item.Price}`);
-                        obj.Price = item.Price.toFixed(2);;
+                        obj.Price = item.Price.toFixed(2);
                     }
                     console.log();
                 });
                 items.push(obj);
-
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                var cell3 = row.insertCell(2);
-                var cell4 = row.insertCell(3);
-
-                cell1.innerHTML = obj.Item;
-                cell2.innerHTML = obj.Quantity;
-                cell3.innerHTML = obj.Price;
-
-                var deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
-                cell4.innerHTML = deletebtn;
-
-                updateSalesCount(obj.Item);
-                console.log("sales count is updated. the sales for ", obj.Item);
-
                 break;
+            }
+            else {
+                return;
             }
         }
 
         console.log("items: " + items);
 
+        // calculate total
         calcTotal();
 
-        //var cell1 = row.insertCell(0);
-        //var cell2 = row.insertCell(1);
-        //var cell3 = row.insertCell(2);
-        //var cell4 = row.insertCell(3);
+        // insert new row with detected item details
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        const cell3 = row.insertCell(2);
+        const cell4 = row.insertCell(3);
 
-        //cell1.innerHTML = obj.Item;
-        //cell2.innerHTML = obj.Quantity;
-        //cell3.innerHTML = obj.Price;
+        cell1.innerHTML = obj.Item;
+        cell2.innerHTML = obj.Quantity;
+        cell3.innerHTML = obj.Price;
 
-        //var deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
-        //cell4.innerHTML = deletebtn;
+        const deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
+        cell4.innerHTML = deletebtn;
     }
-    xmlhttp.open("GET", "http://localhost:5000/get_json");
+    // xmlhttp.open("GET", "http://localhost:5000/get_json");
+    // madihah:
+    xmlhttp.open("GET", "http://localhost:52202/get_json");
     xmlhttp.send();
 }
 
+// calculates total
 function calcTotal() {
     console.log("calcTotal() called.")
     if (d1.length == 0) {
         $('#total').html(total);
     }
-    for (var i = 0; i < d1.length; i++) {
-        total += parseFloat(d1[i].Price);
+    for (const element of d1) {
+        total += parseFloat(element.Price);
         console.log("total: " + total);
         $('#total').html(total.toFixed(2));
     }
     total = 0;
 }
 
+// deletes item from table
 function deleteItem(r) {
     console.log("deleteItem() called.")
-    var i = r.parentNode.parentNode.rowIndex;
+    const i = r.parentNode.parentNode.rowIndex;
     console.log("Index row: " + i);
     document.getElementById("myTable").deleteRow(i);
     // add code to also delete item from array
-    var deleted = items.splice(i - 1, 1);
+    const deleted = items.splice(i - 1, 1);
     console.log("Index array: " + i);
     console.log("Item deleted: " + deleted);
     console.log(items);
