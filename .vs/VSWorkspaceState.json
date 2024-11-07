@@ -1,7 +1,12 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\datasetPreparation",
+    "\\datasetPreparation\\streamlit",
+    "\\datasetPreparation\\util_roboflow",
+    "\\prototypev2",
+    "\\prototypev2\\templates"
   ],
-  "SelectedNode": "\\C:\\Users\\ptplokee\\Source\\Repos\\MiniMart",
+  "SelectedNode": "\\prototypev2\\app.py",
   "PreviewInSolutionExplorer": false
 }
