@@ -1,7 +1,9 @@
 # Paths
 MODEL_PATH = "../model/martModelv4/weights/best.pt"
-JSON_DIRECTORY = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\prototypev2\\static"
-JSON_PATH = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\prototypev2\\static\\flask_detect.json"
+#JSON_DIRECTORY = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\prototypev2\\static"
+JSON_DIRECTORY = "C:/Users/ptpmaahm/Source/Repos/MiniMart/prototypev2/static"
+#JSON_PATH = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\prototypev2\\static\\flask_detect.json"
+JSON_PATH = "C:/Users/ptpmaahm/Source/Repos/MiniMart/prototypev2/static/flask_detect.json"
 JSON_FILE_NAME = "flask_detect.json"
 
 # YOLO Model Settings
