@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\prototypev2",
+    "\\prototypev2\\dbConnection",
+    "\\prototypev2\\static",
+    "\\prototypev2\\templates"
   ],
-  "SelectedNode": "\\C:\\Users\\ptplokee\\Source\\Repos\\MiniMart",
   "PreviewInSolutionExplorer": false
 }

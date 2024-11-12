@@ -1,81 +1,57 @@
-const sql = require('mssql/msnodesqlv8');
+// C:\Users\ptpmaahm\Source\Repos\MiniMart\prototypev2\dbConnection\get_item_details.js
+const express = require('express');
+const app = express();
+const sql = require("mssql/msnodesqlv8");
+const cors = require("cors");
 
-const dbConfig = {
-    server: 'PTPNTE818',
-    port: 1433,
-    database: 'miniMart',
-    driver: "msnodesqlv8",
-    options: {
-        trustedConnection: true,
-    }
-}
+app.use(cors());
+app.get('/item_details',
+    async function (req, res) {
 
-const fs = require("fs");
+        try {
+            // config for database
+            const config = {
+                server: 'PTPNTE818',
+                database: 'miniMart',
+                driver: 'msnodesqlv8',
+                options: {
+                    trustedConnection: true,
+                    trustServerCertificate: true
+                },
+            };
+            // connect with database
+            await sql.connect(config);
 
-const items = new Array();
-const obj = {};
+            // select all item IDs with name and price
+            const all_items = await sql.query`SELECT * FROM [miniMart].[dbo].[item_list]`;
+            console.log("1. all item details: ");
+            console.log(all_items);
 
-// madihah: need to add 'export' before async function ...
-async function getDetails() {
-
-    try {
-        await sql.connect(dbConfig);
-
-        //const myObj = fetch("http://localhost:5000/get_json")
-        //    .then((res) => {
-        //        if (!res.ok) {
-        //            throw new Error
-        //                (`HTTP error! Status: ${res.status}`);
-        //        }
-        //        return res.json();
-        //    })
-        //    .then((data) =>
-        //        console.log(data))
-        //    .catch((error) =>
-        //        console.error("Unable to fetch data:", error));
-
-        // madihah: currently using local file
-        const myObj = fs.readFileSync("./detected_item.json");
-        let parsed_myObj = JSON.parse(myObj);
-        let item_id = parsed_myObj.class_id;
-
-        console.log("item_id: " + item_id);
-        const result = await sql.query`SELECT * FROM [miniMart].[dbo].[item_list] WHERE [item_id] = ${item_id}`;
-        console.log("result");
-        console.dir(result);
-
-        for (let key in result) {
-            if (key == "recordset") {
-                console.log("found recordset");
-                let recordset = result[key];
-                console.log("recordset:");
-                console.log(recordset);
-                let name = "item_name";
-                let price = "item_price";
-                let i = 0;
-                obj.Item = recordset[i][name];
-                obj.Price = recordset[i][price].toFixed(2);
-                break;
+            for (let key in all_items) {
+                if (key == "recordset") {
+                    console.log("2. found recordset");
+                    let recordset = all_items[key];
+                    console.log("3. recordset:");
+                    console.log(recordset);
+                    res.send(recordset);
+                    break;
+                }
             }
+        } catch (error) {
+            console.error('Error executing:', error);
+        } finally {
+            // Close the connection when done
+            sql.close();
         }
-        
-        obj.Quantity = 1;
+    });
 
-        console.log("Name: " + obj.Item);
-        console.log("Price: " + obj.Price);
-        console.log("Obj");
-        console.log(obj);
+// post data on port 5000 (localhost:5000/item_details)
+app.post("/item_details",
+    function (req, res) {
+        let recordset = req.recordset;
+        res.send(recordset);
+    });
 
-        items.push(obj);
-        //module.exports = { items };
-        console.log("items");
-        console.dir(items);
-    } catch (error) {
-        console.error('Error executing getDetails():', error);
-    } finally {
-        // Close the connection when done
-        sql.close();
-    }
-}
-getDetails();
-// export function addItem();
+app.listen(5000, function () {
+    console.log("server is running on port 5000");
+})

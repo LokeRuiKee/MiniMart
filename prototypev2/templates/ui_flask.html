@@ -13,29 +13,32 @@
     <div class="row" id="mycontainer">
         <div class="column">
             <div class="row" id="guide">
-                <p><b>Show items clearly to the webcam one by one.
+                <p>
+                    <b>
+                        Show items clearly to the webcam one by one.
                         Wait for the current item to be added to the list before continuing with the next item.
                         If there is a duplicate, press the 'Delete' button on the item you want to delete.
-                        Press 'Pay' when scanning items is complete. </b></p>
+                        Press 'Pay' when scanning items is complete.
+                    </b>
+                </p>
 
-                <p><i>Tunjukkan barang dengan jelas kepada kamera satu per satu.
+                <p>
+                    <i>
+                        Tunjukkan barang dengan jelas kepada kamera satu per satu.
                         Tunggu barang ditambahkan ke senarai sebelum meneruskan dengan barang seterusnya.
                         Jika terdapat pendua, tekan butang 'Delete' pada barang yang ingin dipadamkan.
-                        Tekan 'Pay' apabila imbasan barang selesai. </i></p>
+                        Tekan 'Pay' apabila imbasan barang selesai.
+                    </i>
+                </p>
             </div>
 
             <div>
-                <img id="videoElement" src="http://localhost:5000/video_feed" alt="Webcam Feed">
+                <img id="videoElement" src="http://127.0.0.1:5000/video_feed" alt="Webcam Feed">
             </div>
         </div>
 
         <div class="column">
-            <!-- remove buttons later -->
-            <button onclick="addItem()">Add Item</button>
 
-            <!-- <h2>Fetch a JSON file with XMLHttpRequest</h2>
-            <p id="demo"></p> -->
-            
             <div id="tablecontainer">
                 <table id="myTable">
                     <tr>
@@ -57,7 +60,9 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!--<script type="module" src="../dbConnection/get_item_details.js"></script>-->
     <script src="script_flask.js"></script>
+
 </body>
 
 </html>
