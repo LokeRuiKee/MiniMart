@@ -7,7 +7,7 @@ import config_temp as config
 import data_config as dconfig
 
 # Define input and output directories for images and annotations
-input_folder = Path(dconfig.INPUT_ANNOTATION_DATA_DIRECTORY)
+input_folder = Path(dconfig.INPUT_DATA_DIRECTORY)
 output_folder = Path(dconfig.OUTPUT_ANNOTATION_DATA_DIRECTORY)
 output_folder.mkdir(parents=True, exist_ok=True)
 

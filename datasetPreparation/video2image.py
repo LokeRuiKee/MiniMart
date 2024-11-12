@@ -2,10 +2,9 @@ import cv2
 import os
 import glob
 import numpy as np
-import data_config as dconfig
 
 # Path to the directory containing video files
-video_directory = dconfig.INPUT_DATA_DIRECTORY
+video_directory = "./dataset/"
 # Get all mp4 files in the directory
 video_files = glob.glob(os.path.join(video_directory, "*.mp4"))
 
