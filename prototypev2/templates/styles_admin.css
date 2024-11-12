@@ -1,0 +1,8 @@
+#previewContainer {
+    text-align: center;
+}
+
+.button #recordVideo {
+    /*position as center of video*/
+    margin: auto;
+}
