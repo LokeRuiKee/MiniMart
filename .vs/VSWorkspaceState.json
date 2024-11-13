@@ -2,10 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\datasetPreparation",
-    "\\datasetPreparation\\analyzer",
-    "\\datasetPreparation\\util_roboflow",
+    "\\datasetPreparation\\pipelinev2",
+    "\\model",
     "\\prototypev2"
   ],
-  "SelectedNode": "\\datasetPreparation\\streamlit",
+  "SelectedNode": "\\datasetPreparation\\pipelinev2\\splitter.py",
   "PreviewInSolutionExplorer": false
 }
