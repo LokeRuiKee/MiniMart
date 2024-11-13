@@ -7,5 +7,7 @@ AUGMENTED_PREPRO_OUTPUT_DIRECTORY = "C:\\Users\\ptplokee\\source\\pipelineDatase
 AUGMENTED_RAW_OUTPUT_DIRECTORY = "C:\\Users\ptplokee\\source\\pipelineDatasetv2\\augmented_raw"
 
 # Annotations
-INPUT_ANNOTATION_DATA_DIRECTORY = "C:\\Users\\ptplokee\\source\\pipelineDatasetv2\\annotation\\images"
-OUTPUT_ANNOTATION_DATA_DIRECTORY = "C:\\Users\\ptplokee\\source\\pipelineDatasetv2\\annotation\\labels"
+INPUT_ANNOTATION_DATA_DIRECTORY = "C:\\Users\\ptplokee\\source\\miniMartDataset\\raw_200\\input"
+OUTPUT_ANNOTATION_DATA_DIRECTORY = "C:\\Users\\ptplokee\\source\\miniMartDataset\\raw_200\\output"
+MODEL_PATH = "../model/modelv1/weights/best.pt"
+CONFIDENCE_THRESHOLD = 0.7

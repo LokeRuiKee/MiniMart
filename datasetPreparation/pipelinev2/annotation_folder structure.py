@@ -3,30 +3,29 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 from pathlib import Path
-import config_temp as config
-import data_config as dconfig
+import data_configv2 as dconfig
 
 # Define input and output directories for images and annotations
 input_folder = Path(dconfig.INPUT_ANNOTATION_DATA_DIRECTORY)
-output_folder = Path(dconfig.OUTPUT_ANNOTATION_DATA_DIRECTORY)
-output_folder.mkdir(parents=True, exist_ok=True)
+output_base_folder = Path(dconfig.OUTPUT_ANNOTATION_DATA_DIRECTORY) / "dataset"
+images_folder = output_base_folder / "images"
+labels_folder = output_base_folder / "labels"
+images_folder.mkdir(parents=True, exist_ok=True)
+labels_folder.mkdir(parents=True, exist_ok=True)
 
 # Load the trained YOLOv8 model
-model = YOLO(config.MODEL_PATH)
+model = YOLO(dconfig.MODEL_PATH)
 
 # Define confidence threshold for detections
-CONFIDENCE_THRESHOLD = config.CONFIDENCE_THRESHOLD
+CONFIDENCE_THRESHOLD = dconfig.CONFIDENCE_THRESHOLD
 
 def run_inference_on_image(image: np.ndarray):
     """Run inference on an image and return detection results."""
     return model.predict(image, conf=CONFIDENCE_THRESHOLD)[0]
 
-def save_yolo_annotation(output_path, class_id, x_center, y_center, width, height):
+def save_yolo_annotation(label_path, class_id, x_center, y_center, width, height):
     """Save a single detection in YOLO annotation format."""
-    relative_path = image_path.relative_to(input_folder)
-    output_path = dconfig.OUTPUT_ANNOTATION_DATA_DIRECTORY / relative_path.parent / f"{image_path.stem}.txt"
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, 'a') as f:
+    with open(label_path, 'a') as f:
         f.write(f"{class_id} {x_center:.6f} {y_center:.6f} {width:.6f} {height:.6f}\n")
 
 def process_image_for_annotations(image_path: Path):
@@ -40,10 +39,14 @@ def process_image_for_annotations(image_path: Path):
     # Run inference on the image
     results = run_inference_on_image(image)
 
+    # Copy the image to the images folder
+    output_image_path = images_folder / image_path.name
+    cv2.imwrite(str(output_image_path), image)
+
     # Prepare output path for annotations
-    annotation_path = output_folder / f"{image_path.stem}.txt"
-    if annotation_path.exists():
-        os.remove(annotation_path)  # Clear previous annotations
+    label_path = labels_folder / f"{image_path.stem}.txt"
+    if label_path.exists():
+        os.remove(label_path)  # Clear previous annotations
 
     # Process each detection and save as YOLO annotations
     img_height, img_width = image.shape[:2]
@@ -62,7 +65,7 @@ def process_image_for_annotations(image_path: Path):
             height = (y2 - y1) / img_height
 
             # Save the annotation
-            save_yolo_annotation(annotation_path, class_id, x_center, y_center, width, height)
+            save_yolo_annotation(label_path, class_id, x_center, y_center, width, height)
 
     print(f"Processed and saved annotations for: {image_path.name}")
 
