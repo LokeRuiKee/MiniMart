@@ -2,18 +2,6 @@
 // calls addItem() when content of json file changes
 let previous = null;
 let current = null;
-//setInterval(function () {
-//    $.getJSON("http://127.0.0.1:5000/get_json", function (json) {
-//        current = JSON.stringify(json);
-//        if (previous && current && previous !== current) {
-//            console.log("addItem() called from detected item, json file changed");
-//            addItem();
-//        }
-//        previous = current;
-//    }).fail(function (jqxhr, textStatus, error) {
-//        console.error("Request Failed: " + textStatus + ", " + error);
-//    });
-//}, 2000);
 
 // display initial total price
 $('#total').html(Number(0.00).toFixed(2));
@@ -140,6 +128,26 @@ function addItem(object) {
 //Calls the function that fetches the data
 getItemDetails()
 
+function testAddItem() {
+    const table = document.getElementById("myTable");
+    const tbodyRowCount = table.tBodies[0].rows.length;
+
+    const row = table.insertRow(tbodyRowCount);
+
+    // insert new row with detected item details
+    const cell1 = row.insertCell(0);
+    const cell2 = row.insertCell(1);
+    const cell3 = row.insertCell(2);
+    const cell4 = row.insertCell(3);
+
+    cell1.innerHTML = "Oreo";
+    cell2.innerHTML = 1;
+    cell3.innerHTML = (3.50).toFixed(2);
+
+    const deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
+    cell4.innerHTML = deletebtn;
+}
+
 // calculates total
 const d1 = items;
 function calcTotal() {
@@ -167,4 +175,32 @@ function deleteItem(r) {
     console.log("Item deleted: " + deleted);
     console.log(items);
     calcTotal();
+}
+
+// madihah: open popup with qr and to reset session (clear table) when pay button is clicked
+// added: thur, 14/11, 2:05pm
+// Get the modal
+const modal = document.getElementById("modal");
+
+// Get the button that opens the modal
+const btn = document.getElementById("paybtn");
+
+const cancelbtn = document.getElementById("cancelbtn");
+
+const completebtn = document.getElementById("completebtn");
+
+// When the user clicks the button, open the modal 
+btn.onclick = function () {
+    modal.style.display = "grid";
+}
+
+// When the user clicks on cancelbtn, close the modal
+cancelbtn.onclick = function () {
+    modal.style.display = "none";
+}
+
+// When the user clicks on completebtn, close the modal and clear table
+completebtn.onclick = function () {
+    modal.style.display = "none";
+    $("#myTable").find("tr:not(:first)").remove();
 }
