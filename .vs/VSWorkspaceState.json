@@ -3,9 +3,8 @@
     "",
     "\\datasetPreparation",
     "\\datasetPreparation\\pipelinev2",
-    "\\model",
     "\\prototypev2"
   ],
-  "SelectedNode": "\\datasetPreparation\\pipelinev2\\splitter.py",
+  "SelectedNode": "\\datasetPreparation\\pipelinev2\\analyzer.py",
   "PreviewInSolutionExplorer": false
 }

@@ -80,6 +80,6 @@ def analyze_dataset(directory_path, labels_dir):
     print(f"Item labels saved to: {labels_path}")
 
 # Usage example
-directory_path = 'C:\\Users\\ptplokee\\source\\miniMartDataset\\raw'
-labels_dir = 'C:\\Users\\ptplokee\\source\\miniMartDataset\\annotationAIv1\\labels'
+directory_path = 'C:\\Users\\ptplokee\\source\\miniMartDataset\\annotationAIv1\\train'
+labels_dir = 'C:\\Users\\ptplokee\\source\\miniMartDataset\\annotationAIv1\\train\\labels'
 analyze_dataset(directory_path, labels_dir)
