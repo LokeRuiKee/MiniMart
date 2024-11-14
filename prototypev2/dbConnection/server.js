@@ -1,4 +1,8 @@
-// C:\Users\ptpmaahm\Source\Repos\MiniMart\prototypev2\dbConnection\get_item_details.js
+// to execute file, open terminal, run following commands:
+// cd C:\Users\ptpmaahm\Source\Repos\MiniMart\prototypev2\dbConnection
+// node server.js
+
+// C:\Users\ptpmaahm\Source\Repos\MiniMart\prototypev2\dbConnection\server.js
 const express = require('express');
 const app = express();
 const sql = require("mssql/msnodesqlv8");
@@ -51,6 +55,16 @@ app.post("/item_details",
         let recordset = req.recordset;
         res.send(recordset);
     });
+
+// post qr code on port 5000 (localhost:5000/qr_code)
+// qr code path: C:\Users\ptpmaahm\Source\Repos\MiniMart\prototypev2\dummy qr.png
+//app.post("/qr_code",
+//    function (req, res) {
+//        res.sendFile(
+//            //__dirname + "/dummy qr.png"
+//            "C:/Users/ptpmaahm/Source/Repos/MiniMart/prototypev2/dummy qr.png"
+//        );
+//    });
 
 app.listen(5000, function () {
     console.log("server is running on port 5000");

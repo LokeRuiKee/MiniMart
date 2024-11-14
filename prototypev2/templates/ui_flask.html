@@ -9,7 +9,6 @@
     <div>
         <h1 id="title">Self Check Out</h1>
     </div>
-    <!-- minimise dimensions to fit all elements in one screen without scrolling -->
     <div class="row" id="mycontainer">
         <div class="column">
             <div class="row" id="guide">
@@ -38,7 +37,7 @@
         </div>
 
         <div class="column">
-
+            <!--<button id="testAddItemBtn" onclick="testAddItem()">Add Item</button>-->
             <div id="tablecontainer">
                 <table id="myTable">
                     <tr>
@@ -53,14 +52,35 @@
                     <div class="column" style="text-align: left;">Total Amount: </div>
                     <div class="column" style="text-align: right;">RM<span id="total"></span></div>
                 </div>
-                <!-- direct to qr code to pay and reset table -->
-                <button class="bottom" id="paybutton" onclick="pay()">Pay</button>
+
+                <!-- Trigger/Open The Modal -->
+                <button class="bottom button" id="paybtn" onclick="pay()">Pay</button>
+            </div>
+
+            <div id="modal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Scan QR code to pay</h2>
+                    </div>
+                    <!--Modal body with image-->
+                    <div class="modal-body">
+                        <!--<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRrLIpz1toUZ8RDJTD7Tbh4t11rhYHo761Pw&s" />-->
+                        <img src="dummy qr.png" />
+                    </div>
+                    <div class="modal-footer">
+                        <button class="button" id="cancelbtn" data-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button class="button" id="completebtn" data-dismiss="modal">
+                            Payment Complete
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!--<script type="module" src="../dbConnection/get_item_details.js"></script>-->
     <script src="script_flask.js"></script>
 
 </body>
@@ -119,10 +139,10 @@
         overflow: auto;
     }
 
-    div.mycontainer div {
-        width: 33%;
-        float: left;
-    }
+        div.mycontainer div {
+            width: 33%;
+            float: left;
+        }
 
     table {
         border-collapse: collapse;
@@ -151,7 +171,7 @@
 
     #tablecontainer {
         padding: 10px;
-        height: 679px;
+        height: 612px;
         position: relative;
         background-color: #D7DAE5;
     }
@@ -163,5 +183,37 @@
         left: 50%;
         -ms-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
+    }
+
+    .button {
+        margin: 5px;
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    }
+
+    /*modal to pay*/
+    .modal {
+        display: none; /* Hidden by default */
+        width: 500px;
+        background-color: #ffffff;
+        border: 1px solid #cccccc;
+        padding: 20px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0px 0px 10px #cccccc;
+        border-radius: 10px;
+        z-index: 1000;
+    }
+
+    .modal-body {
+        display: flex;
+        margin: 20px;
+        justify-content: center;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: right;
     }
 </style>
