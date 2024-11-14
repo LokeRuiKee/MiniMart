@@ -1,10 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\datasetPreparation",
-    "\\datasetPreparation\\pipelinev2",
-    "\\prototypev2"
+    "\\prototypev2",
+    "\\prototypev2\\dbConnection",
+    "\\prototypev2\\templates"
   ],
-  "SelectedNode": "\\datasetPreparation\\pipelinev2\\analyzer.py",
+  "SelectedNode": "\\prototypev2\\dummy qr.png",
   "PreviewInSolutionExplorer": false
 }
