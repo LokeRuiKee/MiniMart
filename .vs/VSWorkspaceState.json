@@ -1,10 +1,11 @@
 {
   "ExpandedNodes": [
     "",
+    "\\datasetPreparation",
+    "\\datasetPreparation\\label-studio",
     "\\prototypev2",
-    "\\prototypev2\\dbConnection",
     "\\prototypev2\\templates"
   ],
-  "SelectedNode": "\\prototypev2\\dummy qr.png",
+  "SelectedNode": "\\datasetPreparation\\label-studio\\label-project.py",
   "PreviewInSolutionExplorer": false
 }
