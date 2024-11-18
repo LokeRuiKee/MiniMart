@@ -117,7 +117,7 @@ function addItem(object) {
         cell2.innerHTML = obj.Quantity;
         cell3.innerHTML = obj.Price;
 
-        const deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
+        const deletebtn = '<button value="Delete" onclick="deleteItem(this)" class="noselect"><span class="text">Delete</span><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"></path></svg></span></button>'
         cell4.innerHTML = deletebtn;
     }
     // change to local:5000/get_json if needed
@@ -140,11 +140,11 @@ function testAddItem() {
     const cell3 = row.insertCell(2);
     const cell4 = row.insertCell(3);
 
-    cell1.innerHTML = "Oreo";
+    cell1.innerHTML = "Malkist Cream Crackers";
     cell2.innerHTML = 1;
     cell3.innerHTML = (3.50).toFixed(2);
 
-    const deletebtn = '<input type="button" value="Delete" onclick="deleteItem(this)">'
+    const deletebtn = '<button value="Delete" onclick="deleteItem(this)" class="noselect button-delete"><span class="text">Delete</span><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"></path></svg></span></button>'
     cell4.innerHTML = deletebtn;
 }
 
