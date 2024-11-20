@@ -1,5 +1,7 @@
 # Paths
-MODEL_PATH = "../model/martModelv4/weights/best.pt"
+#MODEL_PATH = "../model/martModelv4/weights/best.pt"
+# madihah:
+MODEL_PATH = "../model/old/martModelv4/weights/best.pt"
 #JSON_DIRECTORY = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\prototypev2\\static"
 JSON_DIRECTORY = "C:/Users/ptpmaahm/Source/Repos/MiniMart/prototypev2/static"
 #JSON_PATH = "C:\\Users\\ptplokee\\Source\\Repos\\MiniMart\\prototypev2\\static\\flask_detect.json"
