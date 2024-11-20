@@ -3,78 +3,94 @@
 
 <head>
     <title>Self Checkout System</title>
+    <link href='https://fonts.googleapis.com/css?family=Averia Serif Libre' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Afacad' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Mulish' rel='stylesheet'>
 </head>
 
 <body>
-    <div>
-        <h1 id="title">Self Check Out</h1>
-    </div>
-    <div class="row" id="mycontainer">
-        <div class="column">
-            <div class="row" id="guide">
-                <p>
-                    <b>
-                        Show items clearly to the webcam one by one.
-                        Wait for the current item to be added to the list before continuing with the next item.
-                        If there is a duplicate, press the 'Delete' button on the item you want to delete.
-                        Press 'Pay' when scanning items is complete.
-                    </b>
-                </p>
-
-                <p>
-                    <i>
-                        Tunjukkan barang dengan jelas kepada kamera satu per satu.
-                        Tunggu barang ditambahkan ke senarai sebelum meneruskan dengan barang seterusnya.
-                        Jika terdapat pendua, tekan butang 'Delete' pada barang yang ingin dipadamkan.
-                        Tekan 'Pay' apabila imbasan barang selesai.
-                    </i>
-                </p>
-            </div>
-
+    <div class="row" id="bgcontainer">
+        <div class="row" id="mycontainer">
             <div>
-                <img id="videoElement" src="http://127.0.0.1:5000/video_feed" alt="Webcam Feed">
+                <h1 id="title">Mini Mart Self Check Out</h1>
             </div>
-        </div>
+            <div class="column">
+                <div class="row" id="guide">
+                    <p>
+                        <b>
+                            Show items clearly to the webcam one by one.
+                            Wait for the current item to be added to the list before continuing with the next item.
+                            If there is a duplicate, press the 'Delete' button on the item you want to delete.
+                            Press 'Pay' when scanning items is complete.
+                        </b>
+                    </p>
 
-        <div class="column">
-            <!--<button id="testAddItemBtn" onclick="testAddItem()">Add Item</button>-->
-            <div id="tablecontainer">
-                <table id="myTable">
-                    <tr>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Price (RM)</th>
-                        <th>Delete item</th>
-                    </tr>
-                </table>
-
-                <div>
-                    <div class="column" style="text-align: left;">Total Amount: </div>
-                    <div class="column" style="text-align: right;">RM<span id="total"></span></div>
+                    <p>
+                        <i>
+                            Tunjukkan barang dengan jelas kepada kamera satu per satu.
+                            Tunggu barang ditambahkan ke senarai sebelum meneruskan dengan barang seterusnya.
+                            Jika terdapat pendua, tekan butang 'Delete' pada barang yang ingin dipadamkan.
+                            Tekan 'Pay' apabila imbasan barang selesai.
+                        </i>
+                    </p>
                 </div>
 
-                <!-- Trigger/Open The Modal -->
-                <button class="bottom button" id="paybtn" onclick="pay()">Pay</button>
+                <!-- Uncomment for quick add item -->
+                <button class="noselect button-add" id="testAddItemBtn" onclick="testAddItem()">
+                    <span class="text">Add Item</span><span class="icon">
+                        <svg viewBox="0 0 24 24"
+                             height="24"
+                             width="24"
+                             xmlns="http://www.w3.org/2000/svg"></svg><span class="buttonSpan">+</span>
+                    </span>
+                </button>
+
+                <div>
+                    <img id="videoElement" src="http://127.0.0.1:5000/video_feed" alt="Webcam Feed">
+                </div>
             </div>
 
-            <div id="modal" class="modal">
-                <!-- Modal content -->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>Scan QR code to pay</h2>
+            <div class="column">
+                <div id="itemDisplayContainer">
+                    <div id="tablecontainer">
+                        <table id="myTable">
+                            <tr style="position: sticky;top: 0;z-index: 1">
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Price (RM)</th>
+                                <th>Delete item</th>
+                            </tr>
+                        </table>
+
                     </div>
-                    <!--Modal body with image-->
-                    <div class="modal-body">
-                        <!--<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRrLIpz1toUZ8RDJTD7Tbh4t11rhYHo761Pw&s" />-->
-                        <img src="dummy qr.png" />
+                    <div>
+                        <div class="column" style="text-align: left;">Total Amount: </div>
+                        <div class="column" style="text-align: right;">RM<span id="total"></span></div>
                     </div>
-                    <div class="modal-footer">
-                        <button class="button" id="cancelbtn" data-dismiss="modal">
-                            Cancel
-                        </button>
-                        <button class="button" id="completebtn" data-dismiss="modal">
-                            Payment Complete
-                        </button>
+
+                    <!-- Trigger/Open The Modal -->
+                    <button class="bottom" id="paybtn">Pay</button>
+
+                </div>
+
+                <div id="modal" class="modal">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 style="text-align: center">Scan QR code to pay</h1>
+                        </div>
+                        <!--Modal body with image-->
+                        <div class="modal-body">
+                            <img src="dummy qr.png" />
+                        </div>
+                        <div class="modal-footer">
+                            <button id="cancelbtn" data-dismiss="modal" style="margin-right: 10px">
+                                Cancel
+                            </button>
+                            <button id="completebtn" data-dismiss="modal">
+                                Payment Complete
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -88,10 +104,23 @@
 </html>
 
 <style>
-    #container {
-        width: 500px;
-        height: 375px;
-        border: 10px #333 solid;
+
+    body {
+        /*font-family: 'Averia Serif Libre';*/
+        font-family: 'Mulish';
+        /*font-size: 22px;*/
+    }
+
+    /* From Uiverse.io by marcelodolza */
+    #bgcontainer {
+        background: radial-gradient(circle at top left,transparent 9%, #6B7D7D 10%,#6B7D7D 15%, transparent 16%), radial-gradient(circle at bottom left,transparent 9%, #6B7D7D 10%,#6B7D7D 15%, transparent 16%), radial-gradient(circle at top right,transparent 9%, #6B7D7D 10%,#6B7D7D 15%, transparent 16%), radial-gradient(circle at bottom right,transparent 9%, #6B7D7D 10%,#6B7D7D 15%, transparent 16%),radial-gradient(circle, transparent 25%, #ffffff 26%),linear-gradient(0deg, transparent 44%, #6B7D7D 45%, #6B7D7D 55%, transparent 56%), linear-gradient(90deg, transparent 44%, #6B7D7D 45%, #6B7D7D 55%, transparent 56%);
+        background-size: 3em 3em;
+        background-color: #ffffff;
+        opacity: 1;
+    }
+
+    #mycontainer {
+        background-color: rgba(255, 255, 255, 0.9);
     }
 
     #videoElement {
@@ -102,6 +131,7 @@
     #title {
         text-align: center;
         align-items: center;
+        margin: 10px;
         /*background-color: #00A8E8;*/
     }
 
@@ -110,10 +140,14 @@
         margin-bottom: 10px;
         padding: 10px;
         background-color: #B9CDDA;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        border-radius: 5px;
     }
 
     * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
     }
 
     /*.row {
@@ -157,6 +191,10 @@
         padding: 16px;
     }
 
+    /*tr {
+        text-align:center;
+    }*/
+
     tr:nth-child(even) {
         background-color: #f2f2f2;
     }
@@ -167,13 +205,22 @@
 
     th {
         background-color: #6B7D7D;
+        color: white;
+    }
+
+    #itemDisplayContainer {
+        padding: 10px;
+        height: 630px;
+        position: relative;
+        background-color: #D7DAE5;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        border-radius: 5px;
     }
 
     #tablecontainer {
-        padding: 10px;
-        height: 612px;
-        position: relative;
-        background-color: #D7DAE5;
+        /*padding: 10px;*/
+        height: 500px;
+        overflow: auto;
     }
 
     .bottom {
@@ -185,10 +232,10 @@
         transform: translate(-50%, -50%);
     }
 
-    .button {
+    /*button {
         margin: 5px;
         box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-    }
+    }*/
 
     /*modal to pay*/
     .modal {
@@ -214,6 +261,169 @@
 
     .modal-footer {
         display: flex;
-        justify-content: right;
+        justify-content: center;
+    }
+
+    /*delete button*/
+    /* From Uiverse.io by cssbuttons-io */
+    button {
+        width: 150px;
+        height: 50px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+        background: #00a600;
+    }
+
+    #cancelbtn {
+        background: red;
+    }
+
+    button, .text {
+        color: white;
+        font-weight: bold;
+        /*font-family: 'Averia Serif Libre';*/
+        font-family: 'Mulish';
+        justify-content: center;
+    }
+
+        /*button:hover {
+            background: #87E752;
+        }*/
+
+        button, button span {
+            transition: 200ms;
+        }
+
+    .button-delete {
+        background: red;
+        justify-content: normal;
+        position: relative;
+    }
+
+    .button-delete, button-delete span {
+        transition: 200ms;
+    }
+
+        .button-delete .text {
+            justify-content: normal;
+            transform: translateX(35px);
+        }
+
+        .button-delete .icon {
+            position: absolute;
+            border-left: 1px solid #c41b1b;
+            transform: translateX(110px);
+            height: 40px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button-delete svg {
+            width: 15px;
+            fill: #eee;
+        }
+
+        .button-delete:hover {
+            background: #ff3636;
+        }
+
+            .button-delete:hover .text {
+                color: transparent;
+            }
+
+            .button-delete:hover .icon {
+                width: 150px;
+                border-left: none;
+                transform: translateX(0);
+            }
+
+        .button-delete:focus {
+            outline: none;
+        }
+
+        .button-delete:active .icon svg {
+            transform: scale(0.8);
+        }
+
+    /* From Uiverse.io by UtariD86 */
+    .button-add {
+        background: #00a600;
+        justify-content: normal;
+    }
+
+    .button-add,
+    button span {
+        transition: 200ms;
+    }
+
+        .button-add .text {
+            justify-content: normal;
+            transform: translateX(35px);
+        }
+
+        .button-add .icon {
+            position: absolute;
+            border-left: 1px solid #007300;
+            transform: translateX(110px);
+            height: 40px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button-add svg {
+            width: 15px;
+            fill: #eee;
+        }
+
+        .button-add:hover {
+            background: #00a600;
+        }
+
+        .button-add:active {
+            background: #00cc00;
+        }
+
+        .button-add:hover .text {
+            color: transparent;
+        }
+
+        .button-add:hover .icon {
+            width: 150px;
+            border-left: none;
+            transform: translateX(0);
+        }
+
+        .button-add:focus {
+            outline: none;
+        }
+
+        .button-add:active .icon svg {
+            transform: scale(0.8);
+        }
+
+    .buttonSpan {
+        color: white;
+        margin: 150px;
+        font-size: 30px;
+    }
+
+    #completebtn:active {
+        background: #00cc00;
+    }
+
+    #paybtn:active {
+        background: #00cc00;
+    }
+
+    #cancelbtn:active {
+        background: #ff3636;
     }
 </style>
