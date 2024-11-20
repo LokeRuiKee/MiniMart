@@ -24,8 +24,7 @@ function updateSalesCount(itemName) {
 // madihah: works
 const baseUrl = 'http://localhost:5000/item_details'
 
-const items = new Array();
-const obj = {};
+const items = [];
 let total = 0;
 
 async function getItemDetails() {
@@ -67,42 +66,41 @@ function addItem(object) {
     console.log("addItem() called.")
     const table = document.getElementById("myTable");
     const tbodyRowCount = table.tBodies[0].rows.length;
-
     const row = table.insertRow(tbodyRowCount);
 
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.onload = function () {
         // from get_json
         const myObj = JSON.parse(this.responseText);
-        console.log(typeof myObj)
         console.log("myObj: ");
         console.log(myObj);
+
         let id = myObj.class_id;
 
         // from item_details
-        object.forEach((item) => {
-            let result_id = item.item_id;
+        const obj = {};
 
-            console.log("result_id: " + result_id);
-            console.log("id: " + id);
+        for (const element of object) {
+            let result_id = element.item_id;
+
             // compares id from json file to dictionary to get item details
             if (parseInt(result_id) === parseInt(id)) {
-                console.log("result_id equals id")
-                // push name, quantity, and price to array "items[]"
-                console.log(`\tName: ${item.item_name}`);
-                obj.Item = item.item_name;
+                console.log("result_id equals id");
+                obj.Item = element.item_name;
                 obj.Quantity = 1;
-                console.log(`\tPrice: ${item.item_price}`);
-                obj.Price = item.item_price.toFixed(2);
-                console.log();
+                obj.Price = element.item_price.toFixed(2);
+                console.log("obj");
+                console.log(obj);
                 items.push(obj);
+                break;
             }
             else {
                 console.log("result_id not equal id")
             }
-        });
+        }
 
-        console.log("items: " + items);
+        console.log("items: ");
+        console.log(items);
 
         // calculate total
         calcTotal();
@@ -117,8 +115,12 @@ function addItem(object) {
         cell2.innerHTML = obj.Quantity;
         cell3.innerHTML = obj.Price;
 
-        const deletebtn = '<button value="Delete" onclick="deleteItem(this)" class="noselect"><span class="text">Delete</span><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"></path></svg></span></button>'
+        const deletebtn = '<button value="Delete" onclick="deleteItem(this)" class="noselect button-delete"><span class="text">Delete</span><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"></path></svg></span></button>'
         cell4.innerHTML = deletebtn;
+
+        // to autoscroll to the bottom every time an item is added
+        const elem = document.getElementById('tablecontainer');
+        elem.scrollTop = elem.scrollHeight;
     }
     // change to local:5000/get_json if needed
     xmlhttp.open("GET", "http://127.0.0.1:5000/get_json");
@@ -146,6 +148,10 @@ function testAddItem() {
 
     const deletebtn = '<button value="Delete" onclick="deleteItem(this)" class="noselect button-delete"><span class="text">Delete</span><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"></path></svg></span></button>'
     cell4.innerHTML = deletebtn;
+
+    // to autoscroll to the bottom every time an item is added
+    const elem = document.getElementById('tablecontainer');
+    elem.scrollTop = elem.scrollHeight;
 }
 
 // calculates total
@@ -199,8 +205,10 @@ cancelbtn.onclick = function () {
     modal.style.display = "none";
 }
 
-// When the user clicks on completebtn, close the modal and clear table
+// When the user clicks on completebtn, close the modal, clear table and reset total
 completebtn.onclick = function () {
     modal.style.display = "none";
     $("#myTable").find("tr:not(:first)").remove();
+    total = 0;
+    $('#total').html(total.toFixed(2));
 }
