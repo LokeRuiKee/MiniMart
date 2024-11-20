@@ -3,9 +3,10 @@
     "",
     "\\datasetPreparation",
     "\\datasetPreparation\\label-studio",
-    "\\prototypev2",
-    "\\prototypev2\\templates"
+    "\\datasetPreparation\\pipelinev2",
+    "\\model",
+    "\\prototypev2"
   ],
-  "SelectedNode": "\\datasetPreparation\\label-studio\\label-project.py",
+  "SelectedNode": "\\datasetPreparation\\pipelinev2\\balancer_preprocess_split.py",
   "PreviewInSolutionExplorer": false
 }

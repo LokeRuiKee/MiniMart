@@ -9,3 +9,5 @@
 /.vs/MiniMart/v16
 /__pycache__
 /datasetPreparation/label-studio/__pycache__
+/model/annotateModelv3/predict
+/model/annotateModelv3/val

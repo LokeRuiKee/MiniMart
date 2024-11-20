@@ -55,7 +55,7 @@ def convert_directory(yolo_dir, image_dir, output_json_path, image_width, image_
 
     for yolo_file in yolo_files:
         image_file = os.path.splitext(yolo_file)[0] + ".jpg"  # Assuming images are .jpg
-        image_path = os.path.join("/static/samples", image_file)  # Path for Label Studio JSON
+        image_path = f"http://localhost:8081/{image_file}"  # Updated path format for Label Studio JSON
         
         # Convert YOLO to Label Studio format
         annotation = yolo_to_label_studio(
