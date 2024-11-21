@@ -3,8 +3,6 @@
 
 <head>
     <title>Self Checkout System</title>
-    <link href='https://fonts.googleapis.com/css?family=Averia Serif Libre' rel='stylesheet'>
-    <link href='https://fonts.googleapis.com/css?family=Afacad' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Mulish' rel='stylesheet'>
 </head>
 
@@ -35,19 +33,20 @@
                     </p>
                 </div>
 
+                <div>
+                    <img id="videoElement" src="http://127.0.0.1:5000/video_feed" alt="Webcam Feed">
+                </div>
+
                 <!-- Uncomment for quick add item -->
-                <button class="noselect button-add" id="testAddItemBtn" onclick="testAddItem()">
+                <!--<button class="noselect button-add" id="testAddItemBtn" onclick="testAddItem()">
                     <span class="text">Add Item</span><span class="icon">
                         <svg viewBox="0 0 24 24"
                              height="24"
                              width="24"
                              xmlns="http://www.w3.org/2000/svg"></svg><span class="buttonSpan">+</span>
                     </span>
-                </button>
+                </button>-->
 
-                <div>
-                    <img id="videoElement" src="http://127.0.0.1:5000/video_feed" alt="Webcam Feed">
-                </div>
             </div>
 
             <div class="column">
@@ -106,25 +105,27 @@
 <style>
 
     body {
-        /*font-family: 'Averia Serif Libre';*/
-        font-family: 'Mulish';
+        /*font-family: 'Mulish';*/
+        font-family: 'Century Gothic';
+        color: #262626;
         /*font-size: 22px;*/
     }
 
     /* From Uiverse.io by marcelodolza */
     #bgcontainer {
-        background: radial-gradient(circle at top left,transparent 9%, #6B7D7D 10%,#6B7D7D 15%, transparent 16%), radial-gradient(circle at bottom left,transparent 9%, #6B7D7D 10%,#6B7D7D 15%, transparent 16%), radial-gradient(circle at top right,transparent 9%, #6B7D7D 10%,#6B7D7D 15%, transparent 16%), radial-gradient(circle at bottom right,transparent 9%, #6B7D7D 10%,#6B7D7D 15%, transparent 16%),radial-gradient(circle, transparent 25%, #ffffff 26%),linear-gradient(0deg, transparent 44%, #6B7D7D 45%, #6B7D7D 55%, transparent 56%), linear-gradient(90deg, transparent 44%, #6B7D7D 45%, #6B7D7D 55%, transparent 56%);
+        background: radial-gradient(circle at top left,transparent 9%, #F2F2F2 10%, #F2F2F2 15%, transparent 16%), radial-gradient(circle at bottom left,transparent 9%, #F2F2F2 10%,#F2F2F2 15%, transparent 16%), radial-gradient(circle at top right,transparent 9%, #F2F2F2 10%,#F2F2F2 15%, transparent 16%), radial-gradient(circle at bottom right,transparent 9%, #F2F2F2 10%,#F2F2F2 15%, transparent 16%),radial-gradient(circle, transparent 25%, #ffffff 26%),linear-gradient(0deg, transparent 44%, #F2F2F2 45%, #F2F2F2 55%, transparent 56%), linear-gradient(90deg, transparent 44%, #F2F2F2 45%, #F2F2F2 55%, transparent 56%);
         background-size: 3em 3em;
         background-color: #ffffff;
         opacity: 1;
     }
 
     #mycontainer {
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: rgba(255, 255, 255, 0);
     }
 
     #videoElement {
         width: 100%;
+        height: 442px;
         background-color: #003459;
     }
 
@@ -132,6 +133,7 @@
         text-align: center;
         align-items: center;
         margin: 10px;
+        color: #009ADD;
         /*background-color: #00A8E8;*/
     }
 
@@ -139,7 +141,9 @@
         width: 100%;
         margin-bottom: 10px;
         padding: 10px;
-        background-color: #B9CDDA;
+        /*background-color: #B9CDDA;*/
+        background-color: #005486;
+        color: white;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         border-radius: 5px;
     }
@@ -204,7 +208,8 @@
     }
 
     th {
-        background-color: #6B7D7D;
+        /*background-color: #6B7D7D;*/
+        background-color: #005486;
         color: white;
     }
 
@@ -275,18 +280,19 @@
         border: none;
         border-radius: 5px;
         box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
-        background: #00a600;
+        /*background: #00a600;*/
+        background: #82BC00;
     }
 
     #cancelbtn {
-        background: red;
+        background: #BA257D;
     }
 
     button, .text {
         color: white;
         font-weight: bold;
-        /*font-family: 'Averia Serif Libre';*/
-        font-family: 'Mulish';
+        /*font-family: 'Mulish';*/
+        font-family: 'Century Gothic';
         justify-content: center;
     }
 
@@ -416,14 +422,16 @@
     }
 
     #completebtn:active {
-        background: #00cc00;
+        /*background: #00cc00;*/
+        background: #006432;
     }
 
     #paybtn:active {
-        background: #00cc00;
+        /*background: #00cc00;*/
+        background: #006432;
     }
 
     #cancelbtn:active {
-        background: #ff3636;
+        background: #7F1E5E;
     }
 </style>
