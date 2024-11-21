@@ -2,11 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\datasetPreparation",
-    "\\datasetPreparation\\label-studio",
+    "\\datasetPreparation\\pipelinev1",
     "\\datasetPreparation\\pipelinev2",
+    "\\datasetPreparation\\pipelinev2\\utils",
     "\\model",
-    "\\prototypev2"
+    "\\model\\annotateModelv3\\train",
+    "\\model\\annotateModelv3\\train\\weights",
+    "\\model\\old"
   ],
-  "SelectedNode": "\\datasetPreparation\\pipelinev2\\balancer_preprocess_split.py",
+  "SelectedNode": "\\datasetPreparation\\pipelinev2\\utils\\data_configv2.py",
   "PreviewInSolutionExplorer": false
 }

@@ -11,3 +11,10 @@
 /datasetPreparation/label-studio/__pycache__
 /model/annotateModelv3/predict
 /model/annotateModelv3/val
+/model/modelv11/predict
+/model/modelv11/val
+/model/annotationModelv11RF/predict
+/model/annotationModelv11RF/val
+/model/experiment/annotateModelv2/val
+/model/experiment/annotateModelv3/predict
+/model/experiment/annotateModelv3/val

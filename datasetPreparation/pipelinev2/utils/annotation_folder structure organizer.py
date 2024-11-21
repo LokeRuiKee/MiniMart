@@ -6,7 +6,7 @@ from pathlib import Path
 import data_configv2 as dconfig
 
 # Define input and output directories for images and annotations
-input_folder = Path(dconfig.INPUT_ANNOTATION_DATA_DIRECTORY)
+input_folder = Path(dconfig.ANNOTATIONMODEL_DATASET_AUGMENTED)
 output_base_folder = Path(dconfig.OUTPUT_ANNOTATION_DATA_DIRECTORY) / "dataset"
 images_folder = output_base_folder / "images"
 labels_folder = output_base_folder / "labels"
