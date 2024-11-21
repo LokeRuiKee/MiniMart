@@ -9,3 +9,8 @@
 /.vs/MiniMart/v16
 /__pycache__
 /datasetPreparation/label-studio/__pycache__/auth.cpython-311.pyc
+/model/annotationModelv11RF/predict
+/model/annotationModelv11RF/val
+/model/experiment/annotateModelv2/val
+/model/experiment/annotateModelv3/predict
+/model/experiment/annotateModelv3/val
