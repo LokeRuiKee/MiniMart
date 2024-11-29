@@ -2,14 +2,16 @@
   "ExpandedNodes": [
     "",
     "\\datasetPreparation",
-    "\\datasetPreparation\\pipelinev1",
     "\\datasetPreparation\\pipelinev2",
     "\\datasetPreparation\\pipelinev2\\utils",
+    "\\datasetPreparation\\pipelinev3",
     "\\model",
-    "\\model\\annotateModelv3\\train",
-    "\\model\\annotateModelv3\\train\\weights",
-    "\\model\\old"
+    "\\model\\annotationModelv11RF",
+    "\\model\\annotationModelv11RF\\train",
+    "\\model\\annotationModelv11RF\\train\\weights",
+    "\\prototypev2",
+    "\\prototypev2\\templates"
   ],
-  "SelectedNode": "\\datasetPreparation\\pipelinev2\\utils\\data_configv2.py",
+  "SelectedNode": "\\datasetPreparation\\pipelinev3\\test.py",
   "PreviewInSolutionExplorer": false
 }
