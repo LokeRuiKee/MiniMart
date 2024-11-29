@@ -8,6 +8,7 @@ import data_config as dconfig
 video_directory = dconfig.INPUT_DATA_DIRECTORY
 # Get all mp4 files in the directory
 video_files = glob.glob(os.path.join(video_directory, "*.mp4"))
+target_count = 355
 
 for video_file in video_files:
     # Create a folder for the current video
@@ -38,5 +39,22 @@ for video_file in video_files:
             prev_frame = gray_frame  # Update previous frame
 
     cam.release()
+
+#def balance_original_images(class_path, image_paths):
+#    original_count = len(image_paths)
+#    if original_count > target_original_count:
+#        # Delete excess original images
+#        excess_count = original_count - target_original_count
+#        images_to_delete = random.sample(image_paths, excess_count)
+#        for img_path in images_to_delete:
+#            os.remove(img_path)
+#        print(f"Deleted {excess_count} excess original images in '{class_path}'")
+#    elif original_count < target_original_count:
+#        print(f"Class '{class_name}' has fewer original images ({original_count}) than target ({target_original_count}).")
+
+#if target_count < frameno:
+#        print(f"Warning: Class '{class_name}' still has fewer original images ({original_count}) than target ({target_original_count}).")
+#else:
+#    balance_original_images(output_folder, image_name)
 
 cv2.destroyAllWindows()

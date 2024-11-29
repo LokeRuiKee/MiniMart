@@ -1,10 +1,15 @@
 {
   "ExpandedNodes": [
     "",
-    "\\prototypev2",
-    "\\prototypev2\\dbConnection",
-    "\\prototypev2\\templates"
+    "\\datasetPreparation",
+    "\\datasetPreparation\\pipelinev1",
+    "\\datasetPreparation\\pipelinev2",
+    "\\datasetPreparation\\pipelinev2\\utils",
+    "\\model",
+    "\\model\\annotateModelv3\\train",
+    "\\model\\annotateModelv3\\train\\weights",
+    "\\model\\old"
   ],
-  "SelectedNode": "\\prototypev2\\dummy qr.png",
+  "SelectedNode": "\\datasetPreparation\\pipelinev2\\utils\\data_configv2.py",
   "PreviewInSolutionExplorer": false
 }
