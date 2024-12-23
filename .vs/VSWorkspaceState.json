@@ -3,15 +3,10 @@
     "",
     "\\datasetPreparation",
     "\\datasetPreparation\\pipelinev2",
-    "\\datasetPreparation\\pipelinev2\\utils",
     "\\datasetPreparation\\pipelinev3",
     "\\model",
-    "\\model\\annotationModelv11RF",
-    "\\model\\annotationModelv11RF\\train",
-    "\\model\\annotationModelv11RF\\train\\weights",
     "\\prototypev2",
     "\\prototypev2\\templates"
   ],
-  "SelectedNode": "\\datasetPreparation\\pipelinev3\\test.py",
   "PreviewInSolutionExplorer": false
 }
