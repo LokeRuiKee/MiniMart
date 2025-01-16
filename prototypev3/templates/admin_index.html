@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Mini Mart Self Checkout</title>
+    <link href="https://fonts.googleapis.com/css?family=Mulish" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Century Gothic';
+            color: #262626;
+        }
+
+        #bgcontainer {
+            background: radial-gradient(circle at top left, transparent 9%, #F2F2F2 10%, #F2F2F2 15%, transparent 16%), radial-gradient(circle at bottom left, transparent 9%, #F2F2F2 10%, #F2F2F2 15%, transparent 16%), radial-gradient(circle at top right, transparent 9%, #F2F2F2 10%, #F2F2F2 15%, transparent 16%), radial-gradient(circle at bottom right, transparent 9%, #F2F2F2 10%, #F2F2F2 15%, transparent 16%), radial-gradient(circle, transparent 25%, #ffffff 26%), linear-gradient(0deg, transparent 44%, #F2F2F2 45%, #F2F2F2 55%, transparent 56%), linear-gradient(90deg, transparent 44%, #F2F2F2 45%, #F2F2F2 55%, transparent 56%);
+            background-size: 3em 3em;
+            background-color: #ffffff;
+            opacity: 1;
+        }
+
+        #videoElement {
+            width: 100%;
+            height: 442px;
+            background-color: #003459;
+        }
+
+        #title {
+            text-align: center;
+            margin: 10px;
+            color: #009ADD;
+        }
+
+        #guide {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #005486;
+            color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            border-radius: 5px;
+        }
+
+        #timer {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #005486;
+        }
+
+        button {
+            width: 150px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+            background: #82BC00;
+            color: white;
+            font-weight: bold;
+            font-family: 'Century Gothic';
+            margin: 10px auto;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="row" id="bgcontainer">
+        <div id="container">
+            <h1 id="title">Mini Mart Self Check Out</h1>
+            <div class="row" id="guide">
+                <p>
+                    <b>
+                        Press ‘record’ button to start recording a video of the product from multiple angles.
+                        Ensure good lighting and keep the product centered and clear.
+                        Slowly rotate or move the product to capture all sides.
+                        The recording will stop automatically after 60 seconds.
+                    </b>
+                </p>
+
+                <p>
+                    <i>
+                        Tekan butang ‘record’ untuk mula merakam video produk dari pelbagai sudut.
+                        Pastikan pencahayaan mencukupi dan produk berada di tengah serta jelas.
+                        Putarkan atau gerakkan produk perlahan-lahan untuk merakam semua bahagian.
+                        Rakaman akan berhenti secara automatik selepas 60 saat.
+                    </i>
+                </p>
+            </div>
+
+            <img id="videoElement" src="/video_feed" alt="Video Feed" style="width: 100%; height: 442px; background-color: #003459;" />
+            <div id="timer">60s</div>
+            <button id="recordButton">Record</button>
+        </div>
+    </div>
+
+    <script>
+        let timer;
+        let timeLeft = 10;
+        const timerDisplay = document.getElementById('timer');
+        const recordButton = document.getElementById('recordButton');
+
+        recordButton.addEventListener('click', () => {
+            if (recordButton.innerText === 'Record') {
+                startRecording();
+            } else if (recordButton.innerText === 'Pause') {
+                pauseRecording();
+            } else {
+                resumeRecording();
+            }
+        });
+
+        function startRecording() {
+            recordButton.innerText = 'Pause';
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = `${timeLeft}s`;
+                if (timeLeft === 0) stopRecording();
+            }, 1000);
+            fetch('/start_recording', { method: 'POST' });
+        }
+
+        function pauseRecording() {
+            recordButton.innerText = 'Resume';
+            clearInterval(timer);
+            fetch('/pause_recording', { method: 'POST' });
+        }
+
+        function resumeRecording() {
+            recordButton.innerText = 'Pause';
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = `${timeLeft}s`;
+                if (timeLeft === 0) stopRecording();
+            }, 1000);
+            fetch('/resume_recording', { method: 'POST' });
+        }
+
+        function stopRecording() {
+            clearInterval(timer);
+            timeLeft = 10;
+            timerDisplay.innerText = '10s';
+            recordButton.innerText = 'Record';
+            fetch('/stop_recording', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => alert(data.message));
+        }
+    </script>
+</body>
+
+</html>

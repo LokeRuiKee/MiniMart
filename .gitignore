@@ -15,3 +15,6 @@
 /model/experiment/annotateModelv3/predict
 /model/experiment/annotateModelv3/val
 /model/modelv1/predict
+/prototypev3/adminDataset/0.recorded_videos
+/runs/detect
+/videos.db

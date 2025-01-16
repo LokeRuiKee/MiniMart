@@ -1,12 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\datasetPreparation",
-    "\\datasetPreparation\\pipelinev2",
-    "\\datasetPreparation\\pipelinev3",
-    "\\model",
+    "\\admin",
+    "\\admin\\ai_model",
+    "\\admin\\ai_model\\datasets",
+    "\\admin\\ai_model\\datasets\\train",
+    "\\admin\\backend",
+    "\\admin\\backend\\recorded_videos",
     "\\prototypev2",
-    "\\prototypev2\\templates"
+    "\\prototypev2\\dbConnection",
+    "\\prototypev2\\static"
   ],
+  "SelectedNode": "\\admin\\backend\\app.py",
   "PreviewInSolutionExplorer": false
 }
