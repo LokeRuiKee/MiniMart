@@ -1,13 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\admin",
-    "\\model",
+    "\\datasetPreparation",
+    "\\datasetPreparation\\pipelinev2\\pipeline test",
     "\\model\\model17_1_25unvalidatedset",
-    "\\prototypev3",
-    "\\prototypev3\\static",
-    "\\prototypev3\\templates"
+    "\\prototypev3"
   ],
-  "SelectedNode": "\\prototypev3\\appAdminTest.py",
+  "SelectedNode": "\\prototypev3\\main.py",
   "PreviewInSolutionExplorer": false
 }
