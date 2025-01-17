@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\admin",
-    "\\admin\\ai_model",
-    "\\admin\\ai_model\\datasets",
-    "\\admin\\ai_model\\datasets\\train",
-    "\\admin\\backend",
-    "\\admin\\backend\\recorded_videos",
-    "\\prototypev2",
-    "\\prototypev2\\dbConnection",
-    "\\prototypev2\\static"
+    "\\prototypev3",
+    "\\prototypev3\\admin",
+    "\\prototypev3\\admin\\backend",
+    "\\prototypev3\\admin\\backend\\templates",
+    "\\prototypev3\\admin\\frontend",
+    "\\prototypev3\\admin\\frontend\\uploads",
+    "\\prototypev3\\admin\\frontend\\uploads\\training_data",
+    "\\prototypev3\\templates"
   ],
-  "SelectedNode": "\\admin\\backend\\app.py",
+  "SelectedNode": "\\.jpg",
   "PreviewInSolutionExplorer": false
 }

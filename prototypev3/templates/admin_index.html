@@ -115,46 +115,46 @@
 
         recordButton.addEventListener('click', () => {
             if (recordButton.innerText === 'Record') {
-                startRecording();
+                startFrameRecording();
             } else if (recordButton.innerText === 'Pause') {
-                pauseRecording();
+                pauseFrameRecording();
             } else {
-                resumeRecording();
+                resumeFrameRecording();
             }
         });
 
-        function startRecording() {
+        function startFrameRecording() {
             recordButton.innerText = 'Pause';
             timer = setInterval(() => {
                 timeLeft--;
                 timerDisplay.innerText = `${timeLeft}s`;
-                if (timeLeft === 0) stopRecording();
+                if (timeLeft === 0) stopFrameRecording();
             }, 1000);
-            fetch('/start_recording', { method: 'POST' });
+            fetch('/start_frame_recording', { method: 'POST' });
         }
 
-        function pauseRecording() {
+        function pauseFrameRecording() {
             recordButton.innerText = 'Resume';
             clearInterval(timer);
-            fetch('/pause_recording', { method: 'POST' });
+            fetch('/pause_frame_recording', { method: 'POST' });
         }
 
-        function resumeRecording() {
+        function resumeFrameRecording() {
             recordButton.innerText = 'Pause';
             timer = setInterval(() => {
                 timeLeft--;
                 timerDisplay.innerText = `${timeLeft}s`;
-                if (timeLeft === 0) stopRecording();
+                if (timeLeft === 0) stopFrameRecording();
             }, 1000);
-            fetch('/resume_recording', { method: 'POST' });
+            fetch('/resume_frame_recording', { method: 'POST' });
         }
 
-        function stopRecording() {
+        function stopFrameRecording() {
             clearInterval(timer);
             timeLeft = 10;
-            timerDisplay.innerText = '10s';
+            timerDisplay.innerText = '60s';
             recordButton.innerText = 'Record';
-            fetch('/stop_recording', { method: 'POST' })
+            fetch('/stop_frame_recording', { method: 'POST' })
                 .then(response => response.json())
                 .then(data => alert(data.message));
         }

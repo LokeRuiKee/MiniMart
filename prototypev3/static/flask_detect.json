@@ -1,5 +1,5 @@
 {
-    "class_id_roboflow": 3,
-    "class_id": "drinho_sugarCane",
-    "confidence": 0.85
+    "class_id": 31,
+    "class_name": "tiger_susu",
+    "confidence": 0.82
 }

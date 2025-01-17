@@ -18,3 +18,14 @@
 /prototypev3/adminDataset/0.recorded_videos
 /runs/detect
 /videos.db
+/model/model17_1_25unvalidatedset/val
+/model/model17_1_25unvalidatedset/args.yaml
+/model/model17_1_25unvalidatedset/confusion_matrix.png
+/model/model17_1_25unvalidatedset/events.out.tfevents.1737088205.4036e4c41c9c.15883.0
+/model/model17_1_25unvalidatedset/confusion_matrix_normalized.png
+/model/model17_1_25unvalidatedset/F1_curve.png
+/model/model17_1_25unvalidatedset/labels.jpg
+/model/model17_1_25unvalidatedset/labels_correlogram.jpg
+/model/model17_1_25unvalidatedset/evaluation
+/model/modelRoboFlow12/train
+/model/modelRoboFlow12/val

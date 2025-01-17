@@ -78,8 +78,8 @@ def generate_video_feed():
 def log_item(class_name, confidence, class_id):
     """Log detected item details to a JSON file."""
     detected_data = {
-        "class_id_roboflow": int(class_id),
-        "class_id": class_name,
+        "class_id": int(class_id)+1,
+        "class_name": class_name,
         "confidence": round(float(confidence), 2)
     }
 
