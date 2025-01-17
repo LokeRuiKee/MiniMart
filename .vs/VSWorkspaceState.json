@@ -2,15 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\admin",
+    "\\model",
+    "\\model\\model17_1_25unvalidatedset",
     "\\prototypev3",
-    "\\prototypev3\\admin",
-    "\\prototypev3\\admin\\backend",
-    "\\prototypev3\\admin\\backend\\templates",
-    "\\prototypev3\\admin\\frontend",
-    "\\prototypev3\\admin\\frontend\\uploads",
-    "\\prototypev3\\admin\\frontend\\uploads\\training_data",
+    "\\prototypev3\\static",
     "\\prototypev3\\templates"
   ],
-  "SelectedNode": "\\.jpg",
+  "SelectedNode": "\\prototypev3\\appAdminTest.py",
   "PreviewInSolutionExplorer": false
 }

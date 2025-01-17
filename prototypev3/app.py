@@ -65,7 +65,7 @@ def get_item_details():
 # SERVING HTML PAGES
 @app.route('/admin')
 def adminHome():
-    return render_template('admin_index.html')
+    return render_template('admin_upload.html')
 
 @app.route('/checkout')
 def checkoutHome():
