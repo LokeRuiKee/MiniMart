@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Annotate Frames</title>
+    <style>
+        #title {
+            text-align: center;
+            margin: 10px;
+            color: #009ADD;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #frame-container {
+            text-align: center;
+        }
+
+        canvas {
+            border: 2px solid #ccc;
+            cursor: crosshair;
+        }
+
+        .toolbar {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+        .submitAnnotations {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="title">Annotate Frames</h1>
+    <div id="frame-container">
+        <canvas id="frameCanvas" width="640" height="480"></canvas>
+    </div>
+    <div class="toolbar">
+        <button id="nextFrame">Next Frame</button>
+        <button id="submitAnnotations">Submit Annotations</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('frameCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let startX, startY;
+        const boundingBoxes = [];
+        let currentFrameIndex = 0;
+        let frames = [];
+        let currentImage = null; // Cache the currently loaded image
+
+        // Initial setup for the toolbar
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('submitAnnotations').style.display = 'none'; // Initially hide Submit Annotations
+        });
+
+        // Load initial frames from the server
+        async function loadFrames() {
+            const response = await fetch('/get_frames');
+            frames = await response.json();
+            loadFrame();
+        }
+
+        function updateToolbar() {
+            const nextFrameButton = document.getElementById('nextFrame');
+            const submitAnnotationsButton = document.getElementById('submitAnnotations');
+
+            if (currentFrameIndex === frames.length - 1) {
+                nextFrameButton.style.display = 'none'; // Hide the Next Frame button
+                submitAnnotationsButton.style.display = 'inline-block'; // Show the Submit Annotations button
+            } else {
+                nextFrameButton.style.display = 'inline-block'; // Show the Next Frame button
+                submitAnnotationsButton.style.display = 'none'; // Hide the Submit Annotations button
+            }
+        }
+
+        function loadFrame() {
+            if (currentFrameIndex < frames.length) {
+                currentImage = new Image();
+                currentImage.src = frames[currentFrameIndex];
+                currentImage.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+                };
+                updateToolbar(); // Update toolbar visibility based on the current frame index
+            } else {
+                alert('No more frames to annotate.');
+            }
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDrawing) {
+                const rect = canvas.getBoundingClientRect();
+                const currentX = e.clientX - rect.left;
+                const currentY = e.clientY - rect.top;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height); // Use cached image
+                ctx.strokeStyle = 'red';
+                ctx.strokeRect(startX, startY, currentX - startX, currentY - startY);
+            }
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            isDrawing = false;
+            const rect = canvas.getBoundingClientRect();
+            const endX = e.clientX - rect.left;
+            const endY = e.clientY - rect.top;
+
+            boundingBoxes.push({
+                x: startX,
+                y: startY,
+                width: endX - startX,
+                height: endY - startY,
+                frame: frames[currentFrameIndex]
+            });
+
+            alert('Bounding box saved for the current frame.');
+        });
+
+        document.getElementById('nextFrame').addEventListener('click', () => {
+            if (currentFrameIndex + 1 < frames.length) {
+                currentFrameIndex++;
+                loadFrame();
+            } else {
+                alert('You have reached the last frame.');
+            }
+        });
+
+        document.getElementById('submitAnnotations').addEventListener('click', async () => {
+            await fetch('/submit_annotations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(boundingBoxes)
+            });
+            alert('Annotations submitted successfully!');
+        });
+
+        loadFrames();
+    </script>
+</body>
+</html>

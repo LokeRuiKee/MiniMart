@@ -67,6 +67,19 @@
             margin: 20px auto;
             text-align: center;
         }
+
+        .nav-button {
+            margin-top: 20px;
+            background-color: #009ADD;
+        }
+
+        #loading {
+            display: none;
+            font-size: 18px;
+            color: #009ADD;
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 
@@ -83,13 +96,53 @@
                 </p>
             </div>
 
-            <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+            <form id="uploadForm" enctype="multipart/form-data">
                 <input type="text" name="product_name" placeholder="Enter Product Name" required>
                 <input type="file" name="video_file" accept="video/*" required>
-                <button type="submit">Upload</button>
+                <button type="submit" id="uploadButton">Upload</button>
             </form>
+
+            <p id="loading">Extracting frames... Please wait.</p>
+
         </div>
     </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+            showLoading(); // Show the loading indicator
+
+            const formData = new FormData(this);
+            const uploadButton = document.getElementById('uploadButton');
+            uploadButton.disabled = true; // Disable button to prevent multiple submissions
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message); // Show success message
+                        window.location.href = '/annotate'; // Redirect to annotate page
+                    } else if (data.error) {
+                        alert(data.error); // Show error message
+                    }
+                })
+                .catch(error => {
+                    alert('Error uploading file. Please try again.');
+                    console.error(error);
+                })
+                .finally(() => {
+                    uploadButton.disabled = false; // Re-enable the button
+                    document.getElementById('loading').style.display = 'none'; // Hide loading indicator
+
+                });
+        });
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+    </script>
 </body>
 
 </html>
