@@ -4,12 +4,15 @@ from werkzeug.utils import secure_filename
 import cv2
 import numpy as np
 import random
+import yaml  # For writing YAML files
+import shutil
+import random
 
 app = Flask(__name__)
 app.secret_key = 'asdqwezxc123'
 
 # Paths and Directories
-UPLOAD_FOLDER = './prototypev3/uploads'  # Change this path as needed
+UPLOAD_FOLDER = './prototypev3/uploads'
 DATASET_DIR = os.path.join(UPLOAD_FOLDER, 'dataset')
 IMAGES_DIR = os.path.join(DATASET_DIR, 'images')
 LABELS_DIR = os.path.join(DATASET_DIR, 'labels')
@@ -19,7 +22,6 @@ USER_LABELS_DIR = os.path.join(USER_LABELLED_DATASET_DIR, 'labels')
 
 for directory in [UPLOAD_FOLDER, DATASET_DIR, IMAGES_DIR, LABELS_DIR]:
     os.makedirs(directory, exist_ok=True)
-# Create the directories if they don't exist
 for directory in [USER_LABELLED_DATASET_DIR, USER_IMAGES_DIR, USER_LABELS_DIR]:
     os.makedirs(directory, exist_ok=True)
     
@@ -48,7 +50,9 @@ def upload_file():
     session['product_name'] = normalized_name
 
     try:
-        save_frames_and_annotations(file_path, normalized_name)
+        all_frames = extract_frames(file_path, normalized_name)
+        selected_frames = select_frames(all_frames)
+        move_frames(all_frames, selected_frames)
     except Exception as e:
         return jsonify({"error": f"Error processing video: {str(e)}"}), 500
 
@@ -68,18 +72,14 @@ def serve_dataset(filename):
     dataset_dir = os.path.abspath(DATASET_DIR)
     return send_from_directory(dataset_dir, filename)
 
-def save_frames_and_annotations(video_path, product_name):
+def extract_frames(video_path, product_name):
     cap = cv2.VideoCapture(video_path)
     frame_idx = 0
     prev_frame = None  # For frame comparison
-    temp_images_dir = os.path.join(IMAGES_DIR, 'temp')
-    temp_labels_dir = os.path.join(LABELS_DIR, 'temp')
     
     # Ensure the necessary directories exist
-    os.makedirs(temp_images_dir, exist_ok=True)
-    os.makedirs(temp_labels_dir, exist_ok=True)
-    os.makedirs(USER_IMAGES_DIR, exist_ok=True)  # Ensure user-labelled dataset folder
-    os.makedirs(IMAGES_DIR, exist_ok=True)       # Ensure dataset folder exists
+    os.makedirs(USER_IMAGES_DIR, exist_ok=True)
+    os.makedirs(IMAGES_DIR, exist_ok=True)
 
     all_frames = []
 
@@ -102,7 +102,7 @@ def save_frames_and_annotations(video_path, product_name):
 
         # Save the frame temporarily
         frame_name = f"{product_name}_{frame_idx}.jpg"
-        frame_path = os.path.join(temp_images_dir, frame_name)
+        frame_path = os.path.join(IMAGES_DIR, frame_name)
         cv2.imwrite(frame_path, frame)
 
         # Save the frame data and label file path
@@ -115,71 +115,26 @@ def save_frames_and_annotations(video_path, product_name):
 
     cap.release()
 
-    # Now, process the frames:
-    # Move the top 15 frames based on calculated differences to the user-labelled dataset
-    top_frames = select_top_frames(all_frames)
+    print(f"Frame extraction completed. Total frames: {len(all_frames)}")
+    return all_frames
 
-    # Move top 15 frames to the user-labelled dataset
-    for frame in top_frames:
+def select_frames(all_frames):
+    sorted_frames = sorted(all_frames, key=lambda x: cv2.sumElems(cv2.imread(x['frame_path']))[0], reverse=True)
+    selected_frames = sorted_frames[:15]
+
+    print(f"15 frames with highest differences have been selected.")
+    return selected_frames
+
+def move_frames(all_frames, selected_frames):
+    for frame in selected_frames:
         if os.path.exists(frame['frame_path']):
             target_frame_path = os.path.join(USER_IMAGES_DIR, frame['frame_name'])
             os.rename(frame['frame_path'], target_frame_path)
-            label_path = os.path.join(USER_LABELS_DIR, frame['frame_name'].replace('.jpg', '.txt'))
-            open(label_path, 'w').close()  # Create empty label files for the moved frames
+            print(f"Selected frames moved to dataset")
         else:
             print(f"File {frame['frame_name']} does not exist at {frame['frame_path']}")
 
-    # Move the remaining frames to the dataset
-    for frame in all_frames:
-        if frame not in top_frames:
-            if os.path.exists(frame['frame_path']):
-                target_frame_path = os.path.join(IMAGES_DIR, frame['frame_name'])
-                os.rename(frame['frame_path'], target_frame_path)
-                label_path = os.path.join(LABELS_DIR, frame['frame_name'].replace('.jpg', '.txt'))
-                open(label_path, 'w').close()  # Create empty label files for the remaining frames
-            else:
-                print(f"File {frame['frame_name']} does not exist at {frame['frame_path']}")
-
-    # Clean up temporary directories
-    cleanup_temp(temp_images_dir, temp_labels_dir)
-
-def select_top_frames(all_frames):
-    # Sort frames by their difference (you can adjust the logic if needed)
-    sorted_frames = sorted(all_frames, key=lambda x: cv2.sumElems(cv2.imread(x['frame_path']))[0], reverse=True)
-    
-    # Select the top 15 frames with the highest difference
-    top_frames = sorted_frames[:15]
-
-    return top_frames
-
-def cleanup_temp(*dirs):
-    for directory in dirs:
-        for root, _, files in os.walk(directory):
-            for file in files:
-                os.remove(os.path.join(root, file))
-        os.rmdir(directory)
-
-#def split_and_save(images_dir, labels_dir):
-#    frames = [os.path.join(images_dir, f) for f in os.listdir(images_dir) if f.endswith('.jpg')]
-#    labels = [os.path.join(labels_dir, f) for f in os.listdir(labels_dir) if f.endswith('.txt')]
-#    combined = list(zip(frames, labels))
-#    random.shuffle(combined)
-
-#    splits = {
-#        'train': combined[:int(0.7 * len(combined))],
-#        'val': combined[int(0.7 * len(combined)):int(0.9 * len(combined))],
-#        'test': combined[int(0.9 * len(combined)):]
-#    }
-
-#    for split_name, data in splits.items():
-#        split_images_dir = os.path.join(DATASET_DIR, split_name, 'images')
-#        split_labels_dir = os.path.join(DATASET_DIR, split_name, 'labels')
-#        os.makedirs(split_images_dir, exist_ok=True)
-#        os.makedirs(split_labels_dir, exist_ok=True)
-
-#        for frame_path, label_path in data:
-#            os.rename(frame_path, os.path.join(split_images_dir, os.path.basename(frame_path)))
-#            os.rename(label_path, os.path.join(split_labels_dir, os.path.basename(label_path)))
+    print(f"All frames moved to respective datasets.")
 
 @app.route('/get_frames', methods=['GET'])
 def get_frames():
@@ -241,6 +196,8 @@ def submit_annotations():
 
     try:
         save_annotations_yolo(annotations, labels_dir)
+        split_dataset(labels_dir)
+        generate_data_yaml(labels_dir, normalized_name)
         return jsonify({"message": "Annotations saved successfully!"})
     except Exception as e:
         print(f"Error while saving annotations: {str(e)}")
@@ -312,6 +269,119 @@ def save_annotations_yolo(annotations, labels_dir):
         # Log the absolute path of the saved file
         absolute_path = os.path.abspath(label_file_path)
         print(f"Annotations saved to (absolute path): {absolute_path}")
+
+def split_dataset(dataset_dir, split_ratios=None, output_dir=None):
+    if split_ratios is None:
+        split_ratios = {"train": 0.7, "val": 0.2, "test": 0.1}
+    
+    if abs(sum(split_ratios.values()) - 1.0) > 1e-6:
+        raise ValueError("Split ratios must sum to 1.0")
+    
+    # Default output directory
+    if output_dir is None:
+        output_dir = dataset_dir
+    
+    # Paths to images and labels directories
+    images_dir = os.path.join(dataset_dir, "images")
+    labels_dir = os.path.join(dataset_dir, "labels")
+    
+    if not os.path.exists(images_dir) or not os.path.exists(labels_dir):
+        raise ValueError("Dataset directory must contain 'images' and 'labels' subdirectories.")
+    
+    # Get all image and label file pairs
+    images = [f for f in os.listdir(images_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+    labels = [f.replace(os.path.splitext(f)[1], ".txt") for f in images]  # Match labels to images
+    
+    if not all(os.path.exists(os.path.join(labels_dir, label)) for label in labels):
+        raise ValueError("Some images are missing corresponding label files.")
+    
+    # Combine and shuffle
+    combined = list(zip(images, labels))
+    random.shuffle(combined)
+    
+    # Calculate split indices
+    total_count = len(combined)
+    train_count = int(split_ratios["train"] * total_count)
+    val_count = int(split_ratios["val"] * total_count)
+    test_count = total_count - train_count - val_count
+    
+    splits = {
+        "train": combined[:train_count],
+        "val": combined[train_count:train_count + val_count],
+        "test": combined[train_count + val_count:]
+    }
+    
+    # Create output directories
+    for split_name in splits:
+        split_images_dir = os.path.join(output_dir, split_name, "images")
+        split_labels_dir = os.path.join(output_dir, split_name, "labels")
+        os.makedirs(split_images_dir, exist_ok=True)
+        os.makedirs(split_labels_dir, exist_ok=True)
+
+        # Copy files into their respective split directories
+        for image_file, label_file in splits[split_name]:
+            src_image = os.path.join(images_dir, image_file)
+            dest_image = os.path.join(split_images_dir, image_file)
+            shutil.copy(src_image, dest_image)
+
+            src_label = os.path.join(labels_dir, label_file)
+            dest_label = os.path.join(split_labels_dir, label_file)
+            shutil.copy(src_label, dest_label)
+    
+    print(f"Dataset successfully split into train, val, and test sets.")
+
+
+def generate_data_yaml(dataset_dir, class_names, output_path="data.yaml"):
+    # Define paths for train, val, and test splits
+    train_path = os.path.join(dataset_dir, "train", "images")
+    val_path = os.path.join(dataset_dir, "val", "images")
+    test_path = os.path.join(dataset_dir, "test", "images")
+
+    # Check if the directories exist
+    if not os.path.exists(train_path) or not os.path.exists(val_path):
+        raise FileNotFoundError("Train or validation directories are missing.")
+
+    # Construct the YAML data
+    data = {
+        "train": train_path,
+        "val": val_path,
+        "nc": len(class_names),  # Number of classes
+        "names": class_names
+    }
+
+    # Add test path if it exists
+    if os.path.exists(test_path):
+        data["test"] = test_path
+
+    # Save the YAML file
+    with open(output_path, "w") as yaml_file:
+        yaml.dump(data, yaml_file, default_flow_style=False)
+
+    print(f"data.yaml file created at {output_path}")
+
+# Helper Function: Train Model
+def train_model(data_yaml_path, output_dir="./annotate_model_outputs"):
+    print(f"Starting training with {data_yaml_path}")
+    annotate_model = YOLO("yolo11n.pt")
+    results = annotate_model.train(data=data_yaml_path, epochs=10)
+    print("Model training completed")
+
+## Helper Function: Auto-Annotate
+#def auto_annotate(model_path, dataset_dir):
+#    print("Starting auto-annotation")
+#    images_dir = os.path.join(dataset_dir, "images")
+#    labels_dir = os.path.join(dataset_dir, "labels")
+
+#    for image_name in os.listdir(images_dir):
+#        image_path = os.path.join(images_dir, image_name)
+#        label_path = os.path.join(labels_dir, image_name.replace('.jpg', '.txt'))
+
+#        # Replace this with the actual YOLOv11 inference command
+#        # This example writes dummy annotations
+#        with open(label_path, "w") as f:
+#            f.write("0 0.5 0.5 0.2 0.2\n")
+
+#    print("Auto-annotation completed")
 
 if __name__ == '__main__':
     app.run()
