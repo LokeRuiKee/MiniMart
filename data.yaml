@@ -1,0 +1,5 @@
+names: tiger-susu
+nc: 10
+test: ./prototypev3/uploads\dataset\test\images
+train: ./prototypev3/uploads\dataset\train\images
+val: ./prototypev3/uploads\dataset\val\images

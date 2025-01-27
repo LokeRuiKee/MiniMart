@@ -50,9 +50,9 @@ def upload_file():
     session['product_name'] = normalized_name
 
     try:
-        all_frames = extract_frames(file_path, normalized_name)
+        all_frames = extract_frames(file_path, normalized_name, USER_IMAGES_DIR, IMAGES_DIR)
         selected_frames = select_frames(all_frames)
-        move_frames(all_frames, selected_frames)
+        move_frames(selected_frames)
     except Exception as e:
         return jsonify({"error": f"Error processing video: {str(e)}"}), 500
 
@@ -72,16 +72,21 @@ def serve_dataset(filename):
     dataset_dir = os.path.abspath(DATASET_DIR)
     return send_from_directory(dataset_dir, filename)
 
-def extract_frames(video_path, product_name):
+def extract_frames(video_path, product_name, user_images_dir, images_dir):
     cap = cv2.VideoCapture(video_path)
     frame_idx = 0
     prev_frame = None  # For frame comparison
     
     # Ensure the necessary directories exist
-    os.makedirs(USER_IMAGES_DIR, exist_ok=True)
-    os.makedirs(IMAGES_DIR, exist_ok=True)
+    os.makedirs(user_images_dir, exist_ok=True)
+    os.makedirs(images_dir, exist_ok=True)
 
     all_frames = []
+
+    if not cap.isOpened():
+        raise ValueError(f"Error: Unable to open video file: {video_path}")
+    
+    frame_diffs = []  # To store the diff scores for statistical calculation
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -91,18 +96,50 @@ def extract_frames(video_path, product_name):
         # Filter: Calculate frame difference
         if prev_frame is not None:
             diff = cv2.absdiff(prev_frame, frame)
-            gray_diff = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
-            non_zero_count = cv2.countNonZero(gray_diff)
-            threshold = 50000
-            if non_zero_count < threshold:
-                print(f"Frame {frame_idx} skipped due to low difference.")
+            diff_score = np.sum(diff)
+            frame_diffs.append(diff_score)  # Store diff score for statistical analysis
+
+        prev_frame = frame  # Update previous frame for comparison
+
+        frame_idx += 1
+
+    cap.release()
+
+    # Calculate dynamic threshold based on statistical analysis
+    if frame_diffs:
+        mean_diff = np.mean(frame_diffs)
+        std_diff = np.std(frame_diffs)
+        # Set threshold as mean + 2 * standard deviation
+        threshold = mean_diff + 2 * std_diff
+        print(f"Dynamic threshold calculated: {threshold}")
+    else:
+        threshold = 1000000  # Default threshold in case of an empty video
+        print(f"Using default threshold: {threshold}")
+
+    # Re-process video with the calculated threshold
+    cap = cv2.VideoCapture(video_path)
+    frame_idx = 0
+    prev_frame = None  # For frame comparison
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Filter: Calculate frame difference
+        if prev_frame is not None:
+            diff = cv2.absdiff(prev_frame, frame)
+            diff_score = np.sum(diff)
+
+            if diff_score < threshold:
+                print(f"Frame {frame_idx} skipped due to low difference (score: {diff_score}).")
                 continue
 
         prev_frame = frame  # Update previous frame for comparison
 
         # Save the frame temporarily
         frame_name = f"{product_name}_{frame_idx}.jpg"
-        frame_path = os.path.join(IMAGES_DIR, frame_name)
+        frame_path = os.path.join(images_dir, frame_name)
         cv2.imwrite(frame_path, frame)
 
         # Save the frame data and label file path
@@ -119,24 +156,53 @@ def extract_frames(video_path, product_name):
     return all_frames
 
 def select_frames(all_frames):
-    sorted_frames = sorted(all_frames, key=lambda x: cv2.sumElems(cv2.imread(x['frame_path']))[0], reverse=True)
-    selected_frames = sorted_frames[:15]
+    images_dir = os.path.join('prototypev3', 'uploads', 'dataset', 'images')
+    
+    frame_by_difference = []
+    prev_frame = None
 
-    print(f"15 frames with highest differences have been selected.")
+    for idx, frame_info in enumerate(all_frames):
+        file_path = frame_info['frame_path']
+        frame = cv2.imread(file_path)
+        
+        if frame is None:
+            print(f"Skipping unreadable or invalid file: {file_path}")
+            continue
+        
+        if prev_frame is not None:
+            # Calculate the difference between current and previous frames
+            diff = cv2.absdiff(prev_frame, frame)
+            diff_score = np.sum(diff)  # Sum of absolute differences
+            
+            # Store the file path and its score
+            frame_by_difference.append({'frame_path': file_path, 'diff_score': diff_score})
+        
+        prev_frame = frame  # Update the previous frame
+
+    if not frame_by_difference:
+        return jsonify({"error": "No valid frames with measurable differences found."}), 404
+
+    # Sort frames by difference score in descending order
+    frame_by_difference.sort(key=lambda x: x['diff_score'], reverse=True)
+    
+    selected_frames = frame_by_difference[:15]
+
+    print(f"{len(selected_frames)} frames with highest difference are selected")
+
     return selected_frames
 
-def move_frames(all_frames, selected_frames):
+def move_frames(selected_frames):
     for frame in selected_frames:
         if os.path.exists(frame['frame_path']):
-            target_frame_path = os.path.join(USER_IMAGES_DIR, frame['frame_name'])
+            target_frame_path = os.path.join(USER_IMAGES_DIR, os.path.basename(frame['frame_path']))
             os.rename(frame['frame_path'], target_frame_path)
-            print(f"Selected frames moved to dataset")
+            print(f"moved frame to {target_frame_path}")
         else:
-            print(f"File {frame['frame_name']} does not exist at {frame['frame_path']}")
+            print(f"File not found: {frame['frame_name']}")
 
     print(f"All frames moved to respective datasets.")
 
-@app.route('/get_frames', methods=['GET'])
+@app.route('/annotation_get_frames', methods=['GET'])
 def get_frames():
     images_dir = os.path.join('prototypev3', 'uploads', 'dataset', 'images')
     
@@ -196,8 +262,10 @@ def submit_annotations():
 
     try:
         save_annotations_yolo(annotations, labels_dir)
-        split_dataset(labels_dir)
-        generate_data_yaml(labels_dir, normalized_name)
+        split_dataset(USER_LABELLED_DATASET_DIR)
+        split_dataset(DATASET_DIR)
+        generate_data_yaml(USER_LABELLED_DATASET_DIR, session['product_name'])
+        generate_data_yaml(DATASET_DIR, session['product_name'])
         return jsonify({"message": "Annotations saved successfully!"})
     except Exception as e:
         print(f"Error while saving annotations: {str(e)}")
@@ -234,30 +302,45 @@ def preprocess_annotations(annotations):
     return processed
 
 def save_annotations_yolo(annotations, labels_dir):
+    import os
+
     os.makedirs(labels_dir, exist_ok=True)
+    generated_labels = set()
+
+    # Preprocess annotations to retain only the latest one for each frame
+    latest_annotations = {}
+    for annotation in annotations:
+        frame_path = annotation.get("frame")
+        if frame_path:  # Ensure the frame_path is valid
+            latest_annotations[frame_path] = annotation  # Replace older annotation with the latest one
+
+    # Convert the deduplicated annotations dictionary back to a list
+    annotations = list(latest_annotations.values())
 
     for annotation in annotations:
-        frame_path = annotation.get('frame')  # Frame path from input JSON
-        bboxes = annotation.get('bboxes', [])  # List of bounding boxes
-        class_names = annotation.get('class_names', {})  # Class-name-to-ID mapping
+        frame_path = annotation.get("frame")  # Frame path from input JSON
+        bboxes = annotation.get("bboxes", [])  # List of bounding boxes
+        class_names = annotation.get("class_names", {})  # Class-name-to-ID mapping
 
         if not frame_path or not bboxes:
             print(f"Skipping annotation with invalid data: {annotation}")
             continue  # Skip invalid or empty annotations
 
         # Derive .txt filename from the frame filename
-        label_filename = os.path.splitext(os.path.basename(frame_path))[0] + '.txt'
+        label_filename = os.path.splitext(os.path.basename(frame_path))[0] + ".txt"
         label_file_path = os.path.join(labels_dir, label_filename).replace("\\", "/")  # Ensure forward slashes
 
+        print(f"Processing frame: {frame_path}, Label file: {label_file_path}")
+
         # Write annotations to the file
-        with open(label_file_path, 'w') as label_file:
+        with open(label_file_path, "w") as label_file:
             for bbox in bboxes:
-                class_name = bbox.get('class')
+                class_name = bbox.get("class")
                 class_id = class_names.get(class_name, -1)  # Retrieve class ID or default to -1
-                x_center = bbox.get('x_center')
-                y_center = bbox.get('y_center')
-                width = bbox.get('width')
-                height = bbox.get('height')
+                x_center = bbox.get("x_center")
+                y_center = bbox.get("y_center")
+                width = bbox.get("width")
+                height = bbox.get("height")
 
                 if class_id == -1 or None in [x_center, y_center, width, height]:
                     print(f"Skipping invalid bounding box: {bbox}")
@@ -266,9 +349,27 @@ def save_annotations_yolo(annotations, labels_dir):
                 # YOLO format: class_id x_center y_center width height
                 label_file.write(f"{class_id} {x_center} {y_center} {width} {height}\n")
 
+        # Add the created label filename to the set
+        generated_labels.add(label_filename)
+
         # Log the absolute path of the saved file
         absolute_path = os.path.abspath(label_file_path)
         print(f"Annotations saved to (absolute path): {absolute_path}")
+
+    # Verify all frames have corresponding label files
+    missing_labels = []
+    for annotation in annotations:
+        frame_path = annotation.get("frame")
+        if frame_path:
+            expected_label_file = os.path.splitext(os.path.basename(frame_path))[0] + ".txt"
+            if expected_label_file not in generated_labels:
+                missing_labels.append(frame_path)
+
+    if missing_labels:
+        print(f"Error: Missing label files for the following frames: {missing_labels}")
+        raise RuntimeError("Some images are missing corresponding label files.")
+    else:
+        print("All annotations successfully saved.")
 
 def split_dataset(dataset_dir, split_ratios=None, output_dir=None):
     if split_ratios is None:
@@ -323,10 +424,13 @@ def split_dataset(dataset_dir, split_ratios=None, output_dir=None):
             src_image = os.path.join(images_dir, image_file)
             dest_image = os.path.join(split_images_dir, image_file)
             shutil.copy(src_image, dest_image)
+            print(f"image from {src_image} split to {dest_image}")
 
             src_label = os.path.join(labels_dir, label_file)
             dest_label = os.path.join(split_labels_dir, label_file)
             shutil.copy(src_label, dest_label)
+            print(f"label from {src_label} split to {dest_label}")
+
     
     print(f"Dataset successfully split into train, val, and test sets.")
 

@@ -64,7 +64,7 @@
 
         // Load initial frames from the server
         async function loadFrames() {
-            const response = await fetch('/get_frames');
+            const response = await fetch('/annotation_get_frames');
             frames = await response.json();
             loadFrame();
         }
@@ -152,6 +152,15 @@
         });
 
         loadFrames();
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') { // Check if the pressed key is 'Enter'
+                const nextFrameButton = document.getElementById('nextFrame');
+                if (nextFrameButton.style.display !== 'none') { // Ensure the button is visible
+                    nextFrameButton.click(); // Simulate a click on the Next Frame button
+                }
+            }
+        });
     </script>
 </body>
 </html>
